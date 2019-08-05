@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DnaCorp.Integrador.Domain.Contratos.Job;
+using DnaCorp.Integrador.Infra.MSSql;
+using DnaCorp.Integrador.Service.JOB;
+using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +13,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 
 namespace DnaCorp.Integrador.WebApp
 {
@@ -31,6 +36,13 @@ namespace DnaCorp.Integrador.WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddHangfire(x => x.UseSqlServerStorage("Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019"));
+            services.AddHangfireServer();
+
+            //IoC
+            services.AddTransient<IConexao, Conexao>();
+            services.AddTransient<IObterEspelhamentoJaburJobService, ObterEspelhamentoJaburJobService>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
@@ -38,6 +50,12 @@ namespace DnaCorp.Integrador.WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //hangfire
+            app.UseHangfireDashboard(@"/monitor");
+
+            RecurringJob.AddOrUpdate<IObterEspelhamentoJaburJobService>("Obter espelhamentos Jabur", t => t.Executa(), cronExpression: "*/15 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
