@@ -53,7 +53,8 @@ namespace DnaCorp.Integrador.WebApp
             //hangfire
             app.UseHangfireDashboard(@"/monitor");
 
-            RecurringJob.AddOrUpdate<IObterEspelhamentoJaburJobService>("Obter espelhamentos Jabur", t => t.Executa(), cronExpression: "*/15 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterEspelhamentoJaburJobService>("Obter espelhamentos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter posicoes Jabur", t => t.Executa(), cronExpression: "*/15 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
 
             if (env.IsDevelopment())
