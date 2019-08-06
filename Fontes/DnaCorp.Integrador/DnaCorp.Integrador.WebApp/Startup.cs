@@ -36,12 +36,15 @@ namespace DnaCorp.Integrador.WebApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //hangfire
+            GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(timeoutInSeconds: 60));
             services.AddHangfire(x => x.UseSqlServerStorage("Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019"));
             services.AddHangfireServer();
-
+            
             //IoC
             services.AddTransient<IConexao, Conexao>();
-            services.AddTransient<IObterEspelhamentoJaburJobService, ObterEspelhamentoJaburJobService>();
+            services.AddTransient<IObterVeiculosJaburJobService, ObterVeiculosJaburJobService>();
+            services.AddTransient<IObterPosicoesJaburJobService, ObterPosicoesJaburJobService>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -50,11 +53,16 @@ namespace DnaCorp.Integrador.WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //hangfire
-            app.UseHangfireDashboard(@"/monitor");
+            app.UseHangfireServer(options: new BackgroundJobServerOptions
+            {
+                Queues = new[] { "automacao"}
+            });
 
-            RecurringJob.AddOrUpdate<IObterEspelhamentoJaburJobService>("Obter espelhamentos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter posicoes Jabur", t => t.Executa(), cronExpression: "*/15 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            const string monitorPath = @"/monitor";
+            app.UseHangfireDashboard(monitorPath);
+
+            RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Obter Veiculos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter Posições Jabur", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
 
             if (env.IsDevelopment())
@@ -77,6 +85,7 @@ namespace DnaCorp.Integrador.WebApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

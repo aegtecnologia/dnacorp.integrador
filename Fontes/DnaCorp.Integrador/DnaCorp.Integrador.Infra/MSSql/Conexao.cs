@@ -41,8 +41,22 @@ namespace DnaCorp.Integrador.Infra.MSSql
 
         public DataTable RetornaDT(string comando)
         {
+            //EnsureConnectionOpen();
+
+            //using (var cmd = conn.CreateCommand())
+            //{
+            //    cmd.Connection = conn;
+            //    cmd.CommandType = CommandType.Text;
+            //    cmd.CommandTimeout = 10000;
+
+            //    var da = new SqlDataAdapter(cmd);
+            //    var dt = new DataTable();
+            //    da.Fill(dt);
+
+            //}
             var cmd = new SqlCommand();
             cmd.Connection = conn;
+            cmd.CommandText = comando;
             cmd.CommandType = CommandType.Text;
             cmd.CommandTimeout = 10000;
 

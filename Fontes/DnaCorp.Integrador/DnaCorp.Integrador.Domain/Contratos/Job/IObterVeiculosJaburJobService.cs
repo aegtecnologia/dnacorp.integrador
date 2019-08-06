@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace DnaCorp.Integrador.Domain.Contratos.Job
 {
 
-    public interface IObterEspelhamentoJaburJobService
+    public interface IObterVeiculosJaburJobService
     {
         void Executa();
     }

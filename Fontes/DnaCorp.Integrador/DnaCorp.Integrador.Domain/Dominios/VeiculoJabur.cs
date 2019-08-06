@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DnaCorp.Integrador.Domain.Dominios
 {
-    public class EspelhamentoJabur
+    public class VeiculoJabur
     {
         public int VeiculoId { get; set; }
         public string Placa { get; set; }

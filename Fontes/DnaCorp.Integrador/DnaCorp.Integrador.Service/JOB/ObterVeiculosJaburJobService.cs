@@ -7,11 +7,12 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 namespace DnaCorp.Integrador.Service.JOB
 {
-    public class ObterPosicoesJaburJobService : IObterPosicoesJaburJobService
+    public class ObterVeiculosJaburJobService : IObterVeiculosJaburJobService
     {
         const string wsUrl = "http://webservice.onixsat.com.br";
         const string usuario = "04900055000109";
@@ -19,7 +20,7 @@ namespace DnaCorp.Integrador.Service.JOB
 
         private IConexao _conexao;
 
-        public ObterPosicoesJaburJobService(IConexao conexao)
+        public ObterVeiculosJaburJobService(IConexao conexao)
         {
             _conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
             _conexao.Configura("");
@@ -28,136 +29,95 @@ namespace DnaCorp.Integrador.Service.JOB
         {
             try
             {
-                var posicoes = ObterPosicoes();
-
-                PersistirDados(posicoes);
-
-                Criar_Log("Processado com sucesso", true);
+                var veiculos = ObterVeiculos();
+                PreparaBase();
+                PersistirDados(veiculos);
             }
-            catch (Exception erro)
-            {
-                Criar_Log(erro.Message, false);
-            }
-
+            catch { }
+            
         }
-
-        private void Criar_Log(string mensagem, bool sucesso)
-        {
-            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
-GETDATE(),
-'ObterPosicoesJaburJobService',
-{(sucesso ? 1:0).ToString()},
-'{mensagem.Replace("'", "")}'
-)";
-            _conexao.Executa(comando);
-
-        }
-        public List<PosicaoJabur> ObterPosicoes()
-        {
-            var posicoes = new List<PosicaoJabur>();
-            var request = MontaRequisicao();
-            var xmlResponse = RequestXml(request);
-
-            ValidaRetorno(xmlResponse);
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                var xml = new XmlDocument();
-                xml.LoadXml(xmlResponse);
-                var mensagens = xml.GetElementsByTagName("MensagemCB");
-                foreach (XmlNode no in mensagens)
-                {
-                    string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-                    dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-                    posicoes.Add(new PosicaoJabur()
-                    {
-                        PosicaoId = Convert.ToInt64(msg.mId),
-                        VeiculoId = (int)msg.veiID,
-                        Data = msg.dt,
-                        DataCadastro = DateTime.Now,
-                        Latitude = msg.lat,
-                        Longitude = msg.lon,
-                        Cidade = msg.mun,
-                        UF = msg.uf,
-                        Endereco = msg.rua,
-                    });
-                }
-            }
-
-            return posicoes;
-        }
-
-        private void ValidaRetorno(string xmlResponse)
-        {
-            if (string.IsNullOrEmpty(xmlResponse)) throw new Exception("Sem resposta do servidor.");
-
-            var xml = new XmlDocument();
-            xml.LoadXml(xmlResponse);
-            var tags = xml.GetElementsByTagName("ErrorRequest");
-
-            if (tags == null) return;
-
-            foreach (XmlNode no in tags)
-            {
-                string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-                dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-
-                throw new Exception(msg.erro);
-            }
-        }
-
-        private Int64 UltimoRegistro()
-        {
-            var consulta = "select ISNULL(MAX(POSICAOID),1) AS ULTIMO from DBO.POSICOES_JABUR";
-            var dt = _conexao.RetornaDT(consulta);
-            if (dt.Rows.Count > 0)
-                return Convert.ToInt64(dt.Rows[0][0]);
-            else
-                return 1;
-        }
-        private void PersistirDados(List<PosicaoJabur> posicoes)
+        private void PersistirDados(List<VeiculoJabur> veiculos)
         {
             StringBuilder sb = new StringBuilder();
 
-            foreach (var p in posicoes)
+            foreach (var veiculo in veiculos)
             {
-                sb.AppendLine($@"insert into posicoes_jabur values (
-{p.PosicaoId},
-{p.VeiculoId.ToString()},
-'{p.DataCadastro.ToString("yyyy/MM/dd HH:mm:ss")}',
-'{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
-'{p.Latitude}',
-'{p.Longitude}',
-'{p.UF}',
-'{p.Cidade}',
-'{p.Endereco?.Replace("'","") ?? ""}');");
+                sb.AppendLine($@"insert into veiculo_jabur values (
+{veiculo.VeiculoId.ToString()},
+'{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}',
+'{veiculo.Placa}',
+'{FormataData(veiculo.EspelhadoAte).ToString("yyyy/MM/dd")}'
+);");
             }
 
             _conexao.Executa(sb.ToString());
-        }   
-        private string MontaRequisicao()
-        {
-            var id = UltimoRegistro().ToString();//"46062233155";
-
-            string comando = @"<RequestMensagemCB>
-<login>" + usuario + @"</login>
-<senha>" + senha + @"</senha>
-<mId>" + id + @"</mId>
-</RequestMensagemCB>";
-
-            return comando;
         }
         private string RequestXmlMock()
         {
-            //ToDo
-            var pasta = @"C:\Anderson\dnacorp.integrador\Recursos\documentos\jabur\modelos\";
-            var arquivo = $"{pasta}jabur-mensagens-20190708171146.xml";
+            var pasta = @"C:\Anderson\documents\Interage\";
+            var arquivo = $"{pasta}jabur-lista-veiculos-20190708170801.xml";
 
             using (StreamReader sr = new StreamReader(arquivo))
             {
                 return sr.ReadToEnd();
             }
         }
+        private string MontaRequisicao()
+        {
+            // obter lista de veiculos
+            string request = @"<RequestVeiculo>
+<login>" + usuario + @"</login>
+<senha>" + senha + @"</senha>
+</RequestVeiculo>";
+
+            return request;
+        }
+        private List<VeiculoJabur> ObterVeiculos()
+        {
+            var veiculos = new List<VeiculoJabur>();
+            var request = MontaRequisicao();
+            var xmlResponse = RequestXml(request);
+
+            ValidaRetorno(xmlResponse);
+
+            var xml = new XmlDocument();
+            xml.LoadXml(xmlResponse);
+            var mensagens = xml.GetElementsByTagName("Veiculo");
+            foreach (XmlNode no in mensagens)
+            {
+                string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+                veiculos.Add(new VeiculoJabur()
+                {
+                    VeiculoId = (int)msg.veiID,
+                    Placa = msg.placa,
+                    EspelhadoAte = msg.valEspelhamento
+                });
+            }
+
+            return veiculos;
+        }
+
+        private bool ContemRegistros()
+        {
+            var res = _conexao.RetornaDT("select * from veiculo_jabur");
+            return res.Rows.Count > 0;
+        }
+
+        private void PreparaBase()
+        {
+            if (ContemRegistros())
+            {
+                _conexao.Executa("delete veiculo_jabur;");
+            }
+        }
+
+        private DateTime FormataData(string data)
+        {
+            var dataPartes = data.Split("/");
+            return new DateTime(Convert.ToInt32(dataPartes[2]), Convert.ToInt32(dataPartes[1]), Convert.ToInt32(dataPartes[0]));
+        }
+
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
@@ -230,11 +190,24 @@ GETDATE(),
                 throw new Exception("Falha ao descompactar dados");
             }
         }
-        private DateTime FormataData(string data)
-        {
-            var dataPartes = data.Split("/");
-            return new DateTime(Convert.ToInt32(dataPartes[2]), Convert.ToInt32(dataPartes[1]), Convert.ToInt32(dataPartes[0]));
-        }
 
+        private void ValidaRetorno(string xmlResponse)
+        {
+            if (string.IsNullOrEmpty(xmlResponse)) throw new Exception("Sem resposta do servidor.");
+
+            var xml = new XmlDocument();
+            xml.LoadXml(xmlResponse);
+            var tags = xml.GetElementsByTagName("ErrorRequest");
+
+            if (tags == null) return;
+
+            foreach (XmlNode no in tags)
+            {
+                string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+
+                throw new Exception(msg.erro);
+            }
+        }
     }
 }

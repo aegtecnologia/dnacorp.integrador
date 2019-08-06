@@ -6,9 +6,8 @@ namespace DnaCorp.Integrador.Domain.Dominios
 {
     public class PosicaoJabur
     {
-        public Guid PosicaoId { get; set; }
+        public Int64 PosicaoId { get; set; }
         public int VeiculoId { get; set; }
-        public string Codigo { get; set; }
         public DateTime DataCadastro { get; set; }
         public DateTime Data { get; set; }
         public string Latitude { get; set; }
