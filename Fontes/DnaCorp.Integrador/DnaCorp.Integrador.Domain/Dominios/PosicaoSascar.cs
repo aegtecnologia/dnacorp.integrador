@@ -1,0 +1,17 @@
+﻿using System;
+
+namespace DnaCorp.Integrador.Domain.Dominios
+{
+    public class PosicaoSascar
+    {
+        public Int64 PosicaoId { get; set; }
+        public int VeiculoId { get; set; }
+        public DateTime DataCadastro { get; set; }
+        public DateTime Data { get; set; }
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+        public string UF { get; set; }
+        public string Cidade { get; set; }
+        public string Endereco { get; set; }
+    }
+}
