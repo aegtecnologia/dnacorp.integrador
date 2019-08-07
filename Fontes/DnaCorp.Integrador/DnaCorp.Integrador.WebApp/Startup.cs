@@ -32,6 +32,10 @@ namespace DnaCorp.Integrador.WebApp
             var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
             var provider = configuration.GetConnectionString("DefaultConnection");
 
+            services.Configure<IISOptions>(o =>
+            {
+                o.ForwardClientCertificate = false;
+            });
 
             services.Configure<CookiePolicyOptions>(options =>
             {

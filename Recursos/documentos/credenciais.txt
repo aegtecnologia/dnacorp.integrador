@@ -1,0 +1,11 @@
+onixsat 
+usuario: 03901499000104
+senha: 16617
+
+sascar
+usuario: interage
+senha: sascar
+
+omnilink
+usuario: interage
+senha: interage

@@ -18,6 +18,8 @@ namespace DnaCorp.Integrador.Service.JOB
         const string wsUrl = "http://webservice.onixsat.com.br";
         const string usuario = "04900055000109";
         const string senha = "GV@2792!";
+        //const string usuario = "03.901.499.0001/04";
+        //const string senha = "16617";
 
         private IConexao _conexao;
 
@@ -38,8 +40,22 @@ namespace DnaCorp.Integrador.Service.JOB
                 PreparaBase();
                 PersistirDados(veiculos);
             }
-            catch { }
-            
+            catch (Exception erro)
+            {
+                Criar_Log(erro.Message, false);
+            }
+
+        }
+        private void Criar_Log(string mensagem, bool sucesso)
+        {
+            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
+GETDATE(),
+'{nameof(ObterVeiculosJaburJobService)}',
+{(sucesso ? 1 : 0).ToString()},
+'{mensagem.Replace("'", "")}'
+)";
+            _conexao.Executa(comando);
+
         }
         private void PersistirDados(List<VeiculoJabur> veiculos)
         {

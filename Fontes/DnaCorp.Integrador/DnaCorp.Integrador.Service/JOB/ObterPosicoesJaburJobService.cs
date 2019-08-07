@@ -18,6 +18,8 @@ namespace DnaCorp.Integrador.Service.JOB
         const string wsUrl = "http://webservice.onixsat.com.br";
         const string usuario = "04900055000109";
         const string senha = "GV@2792!";
+        //const string usuario = "03901499000104";      
+        //const string senha = "16617";
 
         private IConexao _conexao;
 
