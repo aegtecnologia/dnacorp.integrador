@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,10 +14,7 @@ namespace DnaCorp.Integrador.Infra.MSSql
         SqlConnection conn;
         public void Configura(string provider)
         {
-            //provider = "Data Source=(local);Initial Catalog=db_aegtecnologia;Integrated Security=True;MultipleActiveResultSets=True";
-            provider = "Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019";
-            //if (string.IsNullOrEmpty(provider))  throw new Exception("Provider inválido!");
-
+            if (string.IsNullOrEmpty(provider))  throw new Exception("Provider inválido!");
             conn = new SqlConnection(provider);
         }
 

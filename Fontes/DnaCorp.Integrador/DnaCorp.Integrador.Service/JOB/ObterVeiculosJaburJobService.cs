@@ -1,6 +1,7 @@
 ﻿using DnaCorp.Integrador.Domain.Contratos.Job;
 using DnaCorp.Integrador.Domain.Dominios;
 using DnaCorp.Integrador.Infra.MSSql;
+using DnaCorp.Integrador.Service.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +24,11 @@ namespace DnaCorp.Integrador.Service.JOB
         public ObterVeiculosJaburJobService(IConexao conexao)
         {
             _conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
-            _conexao.Configura("");
+            dynamic config = ConfigurationHelper.getConfiguration();
+            var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+            _conexao.Configura(provider);
+            //_conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
+            //_conexao.Configura();
         }
         public void Executa()
         {

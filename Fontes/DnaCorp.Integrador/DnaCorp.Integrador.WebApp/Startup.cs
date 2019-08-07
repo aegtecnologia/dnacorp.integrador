@@ -29,6 +29,10 @@ namespace DnaCorp.Integrador.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var configuration = services.BuildServiceProvider().GetService<IConfiguration>();
+            var provider = configuration.GetConnectionString("DefaultConnection");
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -38,7 +42,8 @@ namespace DnaCorp.Integrador.WebApp
 
             //hangfire
             GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(timeoutInSeconds: 60));
-            services.AddHangfire(x => x.UseSqlServerStorage("Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019"));
+            //services.AddHangfire(x => x.UseSqlServerStorage("Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019"));
+            services.AddHangfire(x => x.UseSqlServerStorage(provider));
             services.AddHangfireServer();
             
             //IoC
