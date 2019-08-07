@@ -66,7 +66,7 @@ GETDATE(),
 
             _conexao.Executa(sb.ToString());
         }
-       
+
         private string MontaRequisicao()
         {
             string request = $@"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:web='http://webservice.web.integracao.sascar.com.br/'>
@@ -121,49 +121,36 @@ GETDATE(),
             }
         }
 
-        private DateTime FormataData(string data)
-        {
-            var dataPartes = data.Split("/");
-            return new DateTime(Convert.ToInt32(dataPartes[2]), Convert.ToInt32(dataPartes[1]), Convert.ToInt32(dataPartes[0]));
-        }
-
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
-            try
-            {
-                // requisição xml em bytes
 
-                byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
-                // cria requisicao
-                HttpWebRequest request = CreateRequest();
-                Stream requestStream = request.GetRequestStream();
-                // envia requisição
-                requestStream.Write(sendData, 0, sendData.Length);
-                requestStream.Flush();
-                requestStream.Dispose();
-                // captura resposta
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                MemoryStream output = new MemoryStream();
-                byte[] buffer = new byte[256];
-                int byteReceived = -1;
-                do
-                {
-                    byteReceived = responseStream.Read(buffer, 0, buffer.Length);
-                    output.Write(buffer, 0, byteReceived);
-                } while (byteReceived > 0);
-                responseStream.Dispose();
-                response.Close();
-                buffer = output.ToArray();
-                output.Dispose();
-                // transforma resposta em string para leitura xml
-                result = UTF8Encoding.UTF8.GetString(buffer);
-            }
-            catch (Exception ex)
+            byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
+            // cria requisicao
+            HttpWebRequest request = CreateRequest();
+            Stream requestStream = request.GetRequestStream();
+            // envia requisição
+            requestStream.Write(sendData, 0, sendData.Length);
+            requestStream.Flush();
+            requestStream.Dispose();
+            // captura resposta
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            MemoryStream output = new MemoryStream();
+            byte[] buffer = new byte[256];
+            int byteReceived = -1;
+            do
             {
-                // tratar exceção
-            }
+                byteReceived = responseStream.Read(buffer, 0, buffer.Length);
+                output.Write(buffer, 0, byteReceived);
+            } while (byteReceived > 0);
+            responseStream.Dispose();
+            response.Close();
+            buffer = output.ToArray();
+            output.Dispose();
+            // transforma resposta em string para leitura xml
+            result = UTF8Encoding.UTF8.GetString(buffer);
+
             return result;
         }
         private HttpWebRequest CreateRequest()

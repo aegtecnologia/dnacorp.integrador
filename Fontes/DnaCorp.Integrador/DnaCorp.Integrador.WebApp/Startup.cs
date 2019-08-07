@@ -46,14 +46,15 @@ namespace DnaCorp.Integrador.WebApp
 
             //hangfire
             GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(timeoutInSeconds: 60));
-            //services.AddHangfire(x => x.UseSqlServerStorage("Data Source=IFTBSNBKL087402;Initial Catalog=db_aegtecnologia;Persist Security Info=False;User ID=admin; Password = Inter@2019"));
             services.AddHangfire(x => x.UseSqlServerStorage(provider));
             services.AddHangfireServer();
             
             //IoC
             services.AddTransient<IConexao, Conexao>();
             services.AddTransient<IObterVeiculosJaburJobService, ObterVeiculosJaburJobService>();
+            services.AddTransient<IObterVeiculosSascarJobService, ObterVeiculosSascarJobService>();
             services.AddTransient<IObterPosicoesJaburJobService, ObterPosicoesJaburJobService>();
+            services.AddTransient<IObterPosicoesSascarJobService, ObterPosicoesSascarJobService>();
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -70,10 +71,11 @@ namespace DnaCorp.Integrador.WebApp
             const string monitorPath = @"/monitor";
             app.UseHangfireDashboard(monitorPath);
 
-            RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Obter Veiculos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter Posições Jabur", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-
-
+            //RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Obter Veiculos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Obter Veiculos Sascar", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter Posições Jabur", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Obter Posições Sascar", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+           
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
