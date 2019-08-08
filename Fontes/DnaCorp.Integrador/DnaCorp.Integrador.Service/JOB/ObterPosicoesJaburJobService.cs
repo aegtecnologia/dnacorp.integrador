@@ -16,10 +16,10 @@ namespace DnaCorp.Integrador.Service.JOB
     public class ObterPosicoesJaburJobService : IObterPosicoesJaburJobService
     {
         const string wsUrl = "http://webservice.onixsat.com.br";
-        //const string usuario = "04900055000109";
-        //const string senha = "GV@2792!";
-        const string usuario = "03901499000104";      
-        const string senha = "11032";
+        const string usuario = "04900055000109";
+        const string senha = "GV@2792!";
+        //const string usuario = "03901499000104";
+        //const string senha = "11032";
 
         private IConexao _conexao;
 
@@ -40,7 +40,7 @@ namespace DnaCorp.Integrador.Service.JOB
 
                 PersistirDados(posicoes);
 
-                Criar_Log("Processado com sucesso", true);
+                Criar_Log($"{nameof(ObterPosicoesJaburJobService)} - Processado com sucesso", true);
             }
             catch (Exception erro)
             {
@@ -51,14 +51,25 @@ namespace DnaCorp.Integrador.Service.JOB
 
         private void Criar_Log(string mensagem, bool sucesso)
         {
-            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
+            try
+            {
+                var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
 GETDATE(),
-'ObterPosicoesJaburJobService',
-{(sucesso ? 1:0).ToString()},
-'{mensagem.Replace("'", "")}'
+'{nameof(ObterPosicoesJaburJobService)}',
+{(sucesso ? 1 : 0).ToString()},
+'{mensagem}'
 )";
-            _conexao.Executa(comando);
+                _conexao.Executa(comando);
 
+            }
+            catch (Exception erro)
+            {
+                mensagem = erro.Message;
+            }
+            finally
+            {
+                LogHelper.CriarLog(mensagem, sucesso);
+            }
         }
         public List<PosicaoJabur> ObterPosicoes()
         {
@@ -75,20 +86,32 @@ GETDATE(),
                 var mensagens = xml.GetElementsByTagName("MensagemCB");
                 foreach (XmlNode no in mensagens)
                 {
-                    string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-                    dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-                    posicoes.Add(new PosicaoJabur()
+                    string sJson = "";
+                    try
                     {
-                        PosicaoId = Convert.ToInt64(msg.mId),
-                        VeiculoId = (int)msg.veiID,
-                        Data = msg.dt,
-                        DataCadastro = DateTime.Now,
-                        Latitude = msg.lat,
-                        Longitude = msg.lon,
-                        Cidade = msg.mun,
-                        UF = msg.uf,
-                        Endereco = msg.rua,
-                    });
+                        sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                        dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+                        posicoes.Add(new PosicaoJabur()
+                        {
+                            PosicaoId = Convert.ToInt64(msg.mId),
+                            VeiculoId = (int)msg.veiID,
+                            Data = msg.dt,
+                            DataCadastro = DateTime.Now,
+                            Latitude = msg.lat,
+                            Longitude = msg.lon,
+                            Cidade = msg.mun,
+                            UF = msg.uf,
+                            Endereco = msg.rua,
+                        });
+                    }
+                    catch (Exception erro)
+                    {
+
+                        throw new Exception($"Erro:" +
+                            $"{erro.Message}" +
+                            $"Json:" +
+                            $"{sJson}");
+                    }
                 }
             }
 
@@ -132,17 +155,17 @@ GETDATE(),
                 sb.AppendLine($@"insert into posicoes_jabur values (
 {p.PosicaoId},
 {p.VeiculoId.ToString()},
-'{p.DataCadastro.ToString("yyyy/MM/dd HH:mm:ss")}',
+getdate(),
 '{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
 '{p.Latitude}',
 '{p.Longitude}',
 '{p.UF}',
 '{p.Cidade}',
-'{p.Endereco?.Replace("'","") ?? ""}');");
+'{p.Endereco?.Replace("'", "") ?? ""}');");
             }
 
             _conexao.Executa(sb.ToString());
-        }   
+        }
         private string MontaRequisicao()
         {
             var id = UltimoRegistro().ToString();//"46062233155";
@@ -169,40 +192,33 @@ GETDATE(),
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
-            try
-            {
-                // requisição xml em bytes
 
-                byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
-                // cria requisicao
-                HttpWebRequest request = CreateRequest();
-                Stream requestStream = request.GetRequestStream();
-                // envia requisição
-                requestStream.Write(sendData, 0, sendData.Length);
-                requestStream.Flush();
-                requestStream.Dispose();
-                // captura resposta
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                MemoryStream output = new MemoryStream();
-                byte[] buffer = new byte[256];
-                int byteReceived = -1;
-                do
-                {
-                    byteReceived = responseStream.Read(buffer, 0, buffer.Length);
-                    output.Write(buffer, 0, byteReceived);
-                } while (byteReceived > 0);
-                responseStream.Dispose();
-                response.Close();
-                buffer = output.ToArray();
-                output.Dispose();
-                // transforma resposta em string para leitura xml
-                result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
-            }
-            catch (Exception ex)
+            byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
+            // cria requisicao
+            HttpWebRequest request = CreateRequest();
+            Stream requestStream = request.GetRequestStream();
+            // envia requisição
+            requestStream.Write(sendData, 0, sendData.Length);
+            requestStream.Flush();
+            requestStream.Dispose();
+            // captura resposta
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            MemoryStream output = new MemoryStream();
+            byte[] buffer = new byte[256];
+            int byteReceived = -1;
+            do
             {
-                // tratar exceção
-            }
+                byteReceived = responseStream.Read(buffer, 0, buffer.Length);
+                output.Write(buffer, 0, byteReceived);
+            } while (byteReceived > 0);
+            responseStream.Dispose();
+            response.Close();
+            buffer = output.ToArray();
+            output.Dispose();
+            // transforma resposta em string para leitura xml
+            result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
+
             return result;
         }
         private HttpWebRequest CreateRequest()
@@ -237,11 +253,6 @@ GETDATE(),
             {
                 throw new Exception("Falha ao descompactar dados");
             }
-        }
-        private DateTime FormataData(string data)
-        {
-            var dataPartes = data.Split("/");
-            return new DateTime(Convert.ToInt32(dataPartes[2]), Convert.ToInt32(dataPartes[1]), Convert.ToInt32(dataPartes[0]));
         }
 
     }

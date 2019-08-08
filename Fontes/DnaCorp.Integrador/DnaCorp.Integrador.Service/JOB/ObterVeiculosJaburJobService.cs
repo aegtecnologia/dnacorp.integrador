@@ -16,10 +16,10 @@ namespace DnaCorp.Integrador.Service.JOB
     public class ObterVeiculosJaburJobService : IObterVeiculosJaburJobService
     {
         const string wsUrl = "http://webservice.onixsat.com.br";
-        //const string usuario = "04900055000109";
-        //const string senha = "GV@2792!";
-        const string usuario = "03901499000104";
-        const string senha = "11032";
+        const string usuario = "04900055000109";
+        const string senha = "GV@2792!";
+        //const string usuario = "03901499000104";
+        //const string senha = "11032";
 
         private IConexao _conexao;
 
@@ -39,23 +39,34 @@ namespace DnaCorp.Integrador.Service.JOB
                 var veiculos = ObterVeiculos();
                 PreparaBase();
                 PersistirDados(veiculos);
+                Criar_Log($"{nameof(ObterVeiculosJaburJobService)} - Processado com sucesso", true);
             }
             catch (Exception erro)
             {
                 Criar_Log(erro.Message, false);
             }
-
         }
         private void Criar_Log(string mensagem, bool sucesso)
         {
-            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
+            try
+            {
+                var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
 GETDATE(),
 '{nameof(ObterVeiculosJaburJobService)}',
 {(sucesso ? 1 : 0).ToString()},
 '{mensagem.Replace("'", "")}'
 )";
-            _conexao.Executa(comando);
+                _conexao.Executa(comando);
 
+            }
+            catch (Exception erro)
+            {
+                mensagem = erro.Message;
+            }
+            finally
+            {
+                LogHelper.CriarLog(mensagem, sucesso);
+            }
         }
         private void PersistirDados(List<VeiculoJabur> veiculos)
         {
