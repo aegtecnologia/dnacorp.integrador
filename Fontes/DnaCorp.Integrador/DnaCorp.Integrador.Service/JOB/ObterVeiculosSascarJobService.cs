@@ -14,8 +14,8 @@ namespace DnaCorp.Integrador.Service.JOB
     public class ObterVeiculosSascarJobService : IObterVeiculosSascarJobService
     {
         const string wsUrl = "http://sasintegra.sascar.com.br/SasIntegra/SasIntegraWSService?wsdl";
-        const string usuario = "interage";
-        const string senha = "sascar";
+        const string usuario = "interage";       
+        const string senha = "InteragePLt@19";
 
         private IConexao _conexao;
 
@@ -33,6 +33,7 @@ namespace DnaCorp.Integrador.Service.JOB
                 var veiculos = ObterVeiculos();
                 PreparaBase();
                 PersistirDados(veiculos);
+                Criar_Log($"{nameof(ObterVeiculosSascarJobService)} - Processado com sucesso", true);
             }
             catch (Exception erro)
             {
@@ -42,14 +43,25 @@ namespace DnaCorp.Integrador.Service.JOB
         }
         private void Criar_Log(string mensagem, bool sucesso)
         {
-            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
+            try
+            {
+                var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
 GETDATE(),
 '{nameof(ObterVeiculosSascarJobService)}',
 {(sucesso ? 1 : 0).ToString()},
 '{mensagem.Replace("'", "")}'
 )";
-            _conexao.Executa(comando);
+                _conexao.Executa(comando);
 
+            }
+            catch (Exception erro)
+            {
+                mensagem = erro.Message;
+            }
+            finally
+            {
+                LogHelper.CriarLog(mensagem, sucesso);
+            }
         }
         private void PersistirDados(List<VeiculoSascar> veiculos)
         {

@@ -16,21 +16,21 @@ namespace DnaCorp.Integrador.Service.JOB
     public class ObterVeiculosJaburJobService : IObterVeiculosJaburJobService
     {
         const string wsUrl = "http://webservice.onixsat.com.br";
-        const string usuario = "04900055000109";
-        const string senha = "GV@2792!";
-        //const string usuario = "03.901.499.0001/04";
-        //const string senha = "16617";
+        //const string usuario = "04900055000109";
+        //const string senha = "GV@2792!";
+        const string usuario = "03901499000104";
+        const string senha = "11032";
 
         private IConexao _conexao;
 
         public ObterVeiculosJaburJobService(IConexao conexao)
         {
             _conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
+
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+
             _conexao.Configura(provider);
-            //_conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
-            //_conexao.Configura();
         }
         public void Executa()
         {
@@ -142,45 +142,39 @@ GETDATE(),
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
-            try
-            {
-                // requisição xml em bytes
 
-                byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
-                // cria requisicao
-                HttpWebRequest request = CreateRequest();
-                Stream requestStream = request.GetRequestStream();
-                // envia requisição
-                requestStream.Write(sendData, 0, sendData.Length);
-                requestStream.Flush();
-                requestStream.Dispose();
-                // captura resposta
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                MemoryStream output = new MemoryStream();
-                byte[] buffer = new byte[256];
-                int byteReceived = -1;
-                do
-                {
-                    byteReceived = responseStream.Read(buffer, 0, buffer.Length);
-                    output.Write(buffer, 0, byteReceived);
-                } while (byteReceived > 0);
-                responseStream.Dispose();
-                response.Close();
-                buffer = output.ToArray();
-                output.Dispose();
-                // transforma resposta em string para leitura xml
-                result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
-            }
-            catch (Exception ex)
+            byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
+            // cria requisicao
+            HttpWebRequest request = CreateRequest();
+            Stream requestStream = request.GetRequestStream();
+            // envia requisição
+            requestStream.Write(sendData, 0, sendData.Length);
+            requestStream.Flush();
+            requestStream.Dispose();
+            // captura resposta
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            MemoryStream output = new MemoryStream();
+            byte[] buffer = new byte[256];
+            int byteReceived = -1;
+            do
             {
-                // tratar exceção
-            }
+                byteReceived = responseStream.Read(buffer, 0, buffer.Length);
+                output.Write(buffer, 0, byteReceived);
+            } while (byteReceived > 0);
+            responseStream.Dispose();
+            response.Close();
+            buffer = output.ToArray();
+            output.Dispose();
+            // transforma resposta em string para leitura xml
+            result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
+            //result = UTF8Encoding.UTF8.GetString(buffer);
+
             return result;
         }
         private HttpWebRequest CreateRequest()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);//"http://webservice.onixsat.com.br");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;

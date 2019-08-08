@@ -15,8 +15,8 @@ namespace DnaCorp.Integrador.Service.JOB
     {
         const string wsUrl = "http://sasintegra.sascar.com.br/SasIntegra/SasIntegraWSService?wsdl";
         const string usuario = "interage";
-        const string senha = "sascar";
-        
+        const string senha = "InteragePLt@19";
+
         private IConexao _conexao;
 
         public ObterPosicoesSascarJobService(IConexao conexao)
@@ -36,7 +36,7 @@ namespace DnaCorp.Integrador.Service.JOB
 
                 PersistirDados(posicoes);
 
-                Criar_Log("Processado com sucesso", true);
+                Criar_Log($"{nameof(ObterPosicoesSascarJobService)} - Processado com sucesso", true);
             }
             catch (Exception erro)
             {
@@ -47,14 +47,25 @@ namespace DnaCorp.Integrador.Service.JOB
 
         private void Criar_Log(string mensagem, bool sucesso)
         {
-            var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
+            try
+            {
+                var comando = $@"INSERT INTO LOG_AUTOMACAO VALUES(
 GETDATE(),
 '{nameof(ObterPosicoesSascarJobService)}',
 {(sucesso ? 1 : 0).ToString()},
 '{mensagem.Replace("'", "")}'
 )";
-            _conexao.Executa(comando);
+                _conexao.Executa(comando);
 
+            }
+            catch (Exception erro)
+            {
+                mensagem = erro.Message;
+            }
+            finally
+            {
+                LogHelper.CriarLog(mensagem, sucesso);
+            }
         }
         public List<PosicaoSascar> ObterPosicoes()
         {
@@ -119,7 +130,7 @@ GETDATE(),
                 sb.AppendLine($@"insert into posicoes_sascar values (
 {p.PosicaoId},
 {p.VeiculoId.ToString()},
-'{p.DataCadastro.ToString("yyyy/MM/dd HH:mm:ss")}',
+getdate(),
 '{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
 '{p.Latitude}',
 '{p.Longitude}',

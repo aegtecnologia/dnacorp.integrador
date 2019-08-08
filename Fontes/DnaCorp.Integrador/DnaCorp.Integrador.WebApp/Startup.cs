@@ -74,7 +74,7 @@ namespace DnaCorp.Integrador.WebApp
             //RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Obter Veiculos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Obter Veiculos Sascar", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             //RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter Posições Jabur", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            //RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Obter Posições Sascar", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Obter Posições Sascar", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
            
             if (env.IsDevelopment())
             {
