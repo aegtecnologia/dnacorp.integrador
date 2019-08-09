@@ -9,3 +9,8 @@ senha: sascar
 omnilink
 usuario: interage
 senha: interage
+
+autotrac
+url: https://www.autotrac-online.com.br/sandboxadeapi/documentation/index
+usuario: teste
+senha: teste
