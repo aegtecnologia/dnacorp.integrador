@@ -11,10 +11,11 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterVeiculosAutotracJobService : IObterVeiculosAutotracJobService
     {
-        const string enderecoApi = "https://www.autotrac-online.com.br/sandboxadeapi/v1/";
-        const string usuario = "teste";
-        const string senha = "teste";
-        const int contaEmpresa = 3253;
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private string ContaEmpresa { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
@@ -24,6 +25,11 @@ namespace DnaCorp.Integrador.Service.JOB
 
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+            Endereco = Convert.ToString(config.Rastreadores.Autotrac.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Autotrac.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Autotrac.Senha);
+            ContaEmpresa = Convert.ToString(config.Rastreadores.Autotrac.Conta);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Autotrac.Ativo);
 
             _conexao.Configura(provider);
         }
@@ -31,11 +37,13 @@ namespace DnaCorp.Integrador.Service.JOB
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+
                 var veiculos = ObterVeiculos();
 
                 PersistirDados(veiculos);
 
-                Criar_Log($"{nameof(ObterVeiculosAutotracJobService)} - Processado com sucesso", true);
+                Criar_Log("Processado com sucesso", true);
             }
             catch (Exception erro)
             {
@@ -63,7 +71,7 @@ GETDATE(),
             }
             finally
             {
-                LogHelper.CriarLog(mensagem, sucesso);
+                LogHelper.CriarLog($"{nameof(ObterVeiculosAutotracJobService)} - {mensagem}", sucesso);
             }
         }
 
@@ -71,10 +79,10 @@ GETDATE(),
         {
             var veiculos = new List<VeiculoAutotrac>();
             var client = new HttpClient();
-            var request = $"accounts/{contaEmpresa}/vehicles";
+            var request = $"accounts/{ContaEmpresa}/vehicles";
 
-            client.BaseAddress = new Uri(enderecoApi);
-            client.DefaultRequestHeaders.Add("Authorization", $"Basic {usuario}:{senha}");
+            client.BaseAddress = new Uri(Endereco);
+            client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
 
             HttpResponseMessage response = client.GetAsync(request).Result;
 

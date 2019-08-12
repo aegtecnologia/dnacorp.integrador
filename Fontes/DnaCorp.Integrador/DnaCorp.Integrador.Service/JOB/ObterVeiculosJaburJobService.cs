@@ -15,11 +15,10 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterVeiculosJaburJobService : IObterVeiculosJaburJobService
     {
-        const string wsUrl = "http://webservice.onixsat.com.br";
-        const string usuario = "04900055000109";
-        const string senha = "GV@2792!";
-        //const string usuario = "03901499000104";
-        //const string senha = "11032";
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
@@ -30,12 +29,20 @@ namespace DnaCorp.Integrador.Service.JOB
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
 
+            Endereco = Convert.ToString(config.Rastreadores.Jabur.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Jabur.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Jabur.Senha);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Jabur.Ativo);
+
+
             _conexao.Configura(provider);
         }
         public void Executa()
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+
                 var veiculos = ObterVeiculos();
                 PreparaBase();
                 PersistirDados(veiculos);
@@ -98,8 +105,8 @@ GETDATE(),
         {
             // obter lista de veiculos
             string request = @"<RequestVeiculo>
-<login>" + usuario + @"</login>
-<senha>" + senha + @"</senha>
+<login>" + Usuario + @"</login>
+<senha>" + Senha + @"</senha>
 </RequestVeiculo>";
 
             return request;
@@ -185,7 +192,7 @@ GETDATE(),
         }
         private HttpWebRequest CreateRequest()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Endereco);
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;

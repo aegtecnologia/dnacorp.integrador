@@ -13,23 +13,32 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterVeiculosSascarJobService : IObterVeiculosSascarJobService
     {
-        const string wsUrl = "http://sasintegra.sascar.com.br/SasIntegra/SasIntegraWSService?wsdl";
-        const string usuario = "interage";       
-        const string senha = "InteragePLt@19";
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
         public ObterVeiculosSascarJobService(IConexao conexao)
         {
-            _conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+
+            Endereco = Convert.ToString(config.Rastreadores.Sascar.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Sascar.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Sascar.Senha);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Sascar.Ativo);
+
+            _conexao = conexao ?? throw new ArgumentNullException(nameof(conexao));
             _conexao.Configura(provider);
         }
         public void Executa()
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+
                 var veiculos = ObterVeiculos();
                 PreparaBase();
                 PersistirDados(veiculos);
@@ -85,8 +94,8 @@ GETDATE(),
 <soapenv:Header/>
 <soapenv:Body>
 <web:obterVeiculos>
-<usuario>{usuario}</usuario>
-<senha>{senha}</senha>
+<usuario>{Usuario}</usuario>
+<senha>{Senha}</senha>
 <quantidade>1000</quantidade>
 </web:obterVeiculos>
 </soapenv:Body>
@@ -167,7 +176,7 @@ GETDATE(),
         }
         private HttpWebRequest CreateRequest()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Endereco);
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;

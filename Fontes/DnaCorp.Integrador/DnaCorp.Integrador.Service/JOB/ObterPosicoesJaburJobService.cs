@@ -15,11 +15,10 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterPosicoesJaburJobService : IObterPosicoesJaburJobService
     {
-        const string wsUrl = "http://webservice.onixsat.com.br";
-        const string usuario = "04900055000109";
-        const string senha = "GV@2792!";
-        //const string usuario = "03901499000104";
-        //const string senha = "11032";
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
@@ -30,12 +29,19 @@ namespace DnaCorp.Integrador.Service.JOB
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
 
+            Endereco = Convert.ToString(config.Rastreadores.Jabur.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Jabur.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Jabur.Senha);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Jabur.Ativo);
+
             _conexao.Configura(provider);
         }
         public void Executa()
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+
                 var posicoes = ObterPosicoes();
 
                 PersistirDados(posicoes);
@@ -160,7 +166,7 @@ getdate(),
 '{p.Latitude}',
 '{p.Longitude}',
 '{p.UF}',
-'{p.Cidade}',
+'{p.Cidade?.Replace("'", "") ?? ""}',
 '{p.Endereco?.Replace("'", "") ?? ""}');");
             }
 
@@ -171,8 +177,8 @@ getdate(),
             var id = UltimoRegistro().ToString();//"46062233155";
 
             string comando = @"<RequestMensagemCB>
-<login>" + usuario + @"</login>
-<senha>" + senha + @"</senha>
+<login>" + Usuario + @"</login>
+<senha>" + Senha + @"</senha>
 <mId>" + id + @"</mId>
 </RequestMensagemCB>";
 
@@ -223,7 +229,7 @@ getdate(),
         }
         private HttpWebRequest CreateRequest()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);//"http://webservice.onixsat.com.br");
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Endereco);
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;

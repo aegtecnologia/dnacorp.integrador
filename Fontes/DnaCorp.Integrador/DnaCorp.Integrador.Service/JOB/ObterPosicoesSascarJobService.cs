@@ -13,9 +13,10 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterPosicoesSascarJobService : IObterPosicoesSascarJobService
     {
-        const string wsUrl = "http://sasintegra.sascar.com.br/SasIntegra/SasIntegraWSService?wsdl";
-        const string usuario = "interage";
-        const string senha = "InteragePLt@19";
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
@@ -25,6 +26,10 @@ namespace DnaCorp.Integrador.Service.JOB
 
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+            Endereco = Convert.ToString(config.Rastreadores.Sascar.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Sascar.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Sascar.Senha);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Sascar.Ativo);
 
             _conexao.Configura(provider);
         }
@@ -147,8 +152,8 @@ getdate(),
 <soapenv:Header/>
 <soapenv:Body>
 <web:obterPacotePosicoes>
-<usuario>{usuario}</usuario>
-<senha>{senha}</senha>
+<usuario>{Usuario}</usuario>
+<senha>{Senha}</senha>
 <quantidade>3000</quantidade>
 </web:obterPacotePosicoes>
 </soapenv:Body>
@@ -156,49 +161,43 @@ getdate(),
 
             return request;
         }
-        
+
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
-            try
-            {
-                // requisição xml em bytes
 
-                byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
-                // cria requisicao
-                HttpWebRequest request = CreateRequest();
-                Stream requestStream = request.GetRequestStream();
-                // envia requisição
-                requestStream.Write(sendData, 0, sendData.Length);
-                requestStream.Flush();
-                requestStream.Dispose();
-                // captura resposta
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream responseStream = response.GetResponseStream();
-                MemoryStream output = new MemoryStream();
-                byte[] buffer = new byte[256];
-                int byteReceived = -1;
-                do
-                {
-                    byteReceived = responseStream.Read(buffer, 0, buffer.Length);
-                    output.Write(buffer, 0, byteReceived);
-                } while (byteReceived > 0);
-                responseStream.Dispose();
-                response.Close();
-                buffer = output.ToArray();
-                output.Dispose();
-                // transforma resposta em string para leitura xml
-                result = UTF8Encoding.UTF8.GetString(buffer);
-            }
-            catch (Exception ex)
+
+            byte[] sendData = UTF8Encoding.UTF8.GetBytes(strRequest);
+            // cria requisicao
+            HttpWebRequest request = CreateRequest();
+            Stream requestStream = request.GetRequestStream();
+            // envia requisição
+            requestStream.Write(sendData, 0, sendData.Length);
+            requestStream.Flush();
+            requestStream.Dispose();
+            // captura resposta
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream responseStream = response.GetResponseStream();
+            MemoryStream output = new MemoryStream();
+            byte[] buffer = new byte[256];
+            int byteReceived = -1;
+            do
             {
-                // tratar exceção
-            }
+                byteReceived = responseStream.Read(buffer, 0, buffer.Length);
+                output.Write(buffer, 0, byteReceived);
+            } while (byteReceived > 0);
+            responseStream.Dispose();
+            response.Close();
+            buffer = output.ToArray();
+            output.Dispose();
+            // transforma resposta em string para leitura xml
+            result = UTF8Encoding.UTF8.GetString(buffer);
+
             return result;
         }
         private HttpWebRequest CreateRequest()
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(wsUrl);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(Endereco);
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;

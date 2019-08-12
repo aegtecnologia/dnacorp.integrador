@@ -70,6 +70,8 @@ namespace DnaCorp.Integrador.WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            //https://crontab.guru/	
+
             app.UseHangfireServer(options: new BackgroundJobServerOptions
             {
                 Queues = new[] { "automacao"}
@@ -79,13 +81,14 @@ namespace DnaCorp.Integrador.WebApp
             app.UseHangfireDashboard(monitorPath);
 
             //AUTOTRAC
-            RecurringJob.AddOrUpdate<IObterVeiculosAutotracJobService>("Autotrac - veiculos", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            RecurringJob.AddOrUpdate<IObterPosicoesAutotracJobService>("Autotrac - posições", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-
-            //RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Obter Veiculos Jabur", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            //RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Obter Veiculos Sascar", t => t.Executa(), cronExpression: "*/45 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            //RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Obter Posições Jabur", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            //RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Obter Posições Sascar", t => t.Executa(), cronExpression: "*/30 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterVeiculosAutotracJobService>("Autotrac - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesAutotracJobService>("Autotrac - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //JABUR
+            RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Jabur - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Jabur - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //SASCAR
+            RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Sascar - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Sascar - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
             if (env.IsDevelopment())
             {

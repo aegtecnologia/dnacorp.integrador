@@ -13,10 +13,11 @@ namespace DnaCorp.Integrador.Service.JOB
 {
     public class ObterPosicoesAutotracJobService : IObterPosicoesAutotracJobService
     {
-        const string enderecoApi = "https://www.autotrac-online.com.br/sandboxadeapi/v1/";
-        const string usuario = "teste";
-        const string senha = "teste";
-        const int contaEmpresa = 3253;
+        private string Endereco { get; set; }
+        private string Usuario { get; set; }
+        private string Senha { get; set; }
+        private string ContaEmpresa { get; set; }
+        private bool Ativo { get; set; }
 
         private IConexao _conexao;
 
@@ -26,6 +27,12 @@ namespace DnaCorp.Integrador.Service.JOB
 
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
+            Endereco = Convert.ToString(config.Rastreadores.Autotrac.Endereco);
+            Usuario = Convert.ToString(config.Rastreadores.Autotrac.Usuario);
+            Senha = Convert.ToString(config.Rastreadores.Autotrac.Senha);
+            ContaEmpresa = Convert.ToString(config.Rastreadores.Autotrac.Conta);
+            Ativo = Convert.ToBoolean(config.Rastreadores.Autotrac.Ativo);
+
 
             _conexao.Configura(provider);
         }
@@ -33,11 +40,13 @@ namespace DnaCorp.Integrador.Service.JOB
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+
                 var posicoes = ObterPosicoes();
 
                 PersistirDados(posicoes);
 
-                Criar_Log($"{nameof(ObterPosicoesAutotracJobService)} - Processado com sucesso", true);
+                Criar_Log($"Processado com sucesso", true);
             }
             catch (Exception erro)
             {
@@ -65,18 +74,18 @@ GETDATE(),
             }
             finally
             {
-                LogHelper.CriarLog(mensagem, sucesso);
+                LogHelper.CriarLog($"{nameof(ObterPosicoesAutotracJobService)} - {mensagem}", sucesso);
             }
         }
 
         private void ObterPosicaoPorVeiculo(int veiculoId, ref List<PosicaoAutotrac> posicoes)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri(enderecoApi);
+            client.BaseAddress = new Uri(Endereco);
 
-            client.DefaultRequestHeaders.Add("Authorization", $"Basic {usuario}:{senha}");
+            client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
 
-            var request = $"accounts/{contaEmpresa}/vehicles/{veiculoId}/positions";
+            var request = $"accounts/{ContaEmpresa}/vehicles/{veiculoId}/positions";
             HttpResponseMessage response = client.GetAsync(request).Result;
 
             if (!response.IsSuccessStatusCode) throw new Exception($"Falha na requisição de posições");
@@ -102,19 +111,19 @@ GETDATE(),
         private List<PosicaoAutotrac> ObterPosicoes()
         {
             var posicoes = new List<PosicaoAutotrac>();
-            var veiculos = listaDeVeiculos();
+            var veiculos = ObterListaDeVeiculos();
             foreach (var veiculoId in veiculos)
                 ObterPosicaoPorVeiculo(veiculoId, ref posicoes);
 
             return posicoes;
         }
 
-        private int[] listaDeVeiculosMock()
+        private int[] ObterListaDeVeiculosMock()
         {
             return new int[] { 151 };
         }
 
-        private List<int> listaDeVeiculos()
+        private List<int> ObterListaDeVeiculos()
         {
             var lista = new List<int>();
             var tabela = _conexao.RetornaDT("select * from veiculo_autotrac");
