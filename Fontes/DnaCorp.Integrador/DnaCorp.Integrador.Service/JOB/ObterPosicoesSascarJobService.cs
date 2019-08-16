@@ -37,6 +37,9 @@ namespace DnaCorp.Integrador.Service.JOB
         {
             try
             {
+                if (!Ativo) throw new Exception("Job inativo");
+                if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
+
                 var posicoes = ObterPosicoes();
 
                 PersistirDados(posicoes);

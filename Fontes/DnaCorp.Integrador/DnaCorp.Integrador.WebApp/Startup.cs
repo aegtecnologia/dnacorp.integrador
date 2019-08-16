@@ -81,13 +81,13 @@ namespace DnaCorp.Integrador.WebApp
             app.UseHangfireDashboard(monitorPath);
 
             //AUTOTRAC
-            RecurringJob.AddOrUpdate<IObterVeiculosAutotracJobService>("Autotrac - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
-            RecurringJob.AddOrUpdate<IObterPosicoesAutotracJobService>("Autotrac - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //RecurringJob.AddOrUpdate<IObterVeiculosAutotracJobService>("Autotrac - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            //RecurringJob.AddOrUpdate<IObterPosicoesAutotracJobService>("Autotrac - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             //JABUR
-            RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Jabur - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterVeiculosJaburJobService>("Jabur - veiculos", t => t.Executa(), cronExpression: "* */12 * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             RecurringJob.AddOrUpdate<IObterPosicoesJaburJobService>("Jabur - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             //SASCAR
-            RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Sascar - veiculos", t => t.Executa(), cronExpression: "*/10 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<IObterVeiculosSascarJobService>("Sascar - veiculos", t => t.Executa(), cronExpression: "* */12 * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
             RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Sascar - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
             if (env.IsDevelopment())
