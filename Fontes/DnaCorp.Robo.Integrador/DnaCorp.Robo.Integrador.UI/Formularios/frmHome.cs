@@ -26,7 +26,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
             var servico = new ObterVeiculosJaburJobService();
             var frm = new frmIntegrador(servico, intervalo);
-            frm.Text = "Integração de veiculos - JABUR";
+            frm.Text = "Integração de posições - JABUR";
             frm.Show();
         }
 
@@ -37,7 +37,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
             var servico = new ObterPosicoesJaburJobService();
             var frm = new frmIntegrador(servico, intervalo);
-            frm.Text = "Integração de posições - JABUR";
+            frm.Text = "Integração de veiculos - JABUR";
             frm.Show();
         }
 
@@ -53,7 +53,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
             var servico = new ObterPosicoesSascarJobService();
             var frm = new frmIntegrador(servico, intervalo);
-            frm.Text = "Integração de posições - SASCAR";
+            frm.Text = "Integração de veiculos - SASCAR";
             frm.Show();
         }
 
@@ -64,7 +64,29 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
             var servico = new ObterVeiculosSascarJobService();
             var frm = new frmIntegrador(servico, intervalo);
-            frm.Text = "Integração de veiculos - SASCAR";
+            frm.Text = "Integração de posições - SASCAR";
+            frm.Show();
+        }
+
+        private void MnuObterVeiculosAutotrac_Click(object sender, EventArgs e)
+        {
+            dynamic config = ConfigurationHelper.getConfiguration();
+            int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterVeiculos.Intervalo);
+
+            var servico = new ObterPosicoesSascarJobService();
+            var frm = new frmIntegrador(servico, intervalo);
+            frm.Text = "Integração de veiculos - AUTOTRAC";
+            frm.Show();
+        }
+
+        private void MnuObterPosicoesAutotrac_Click(object sender, EventArgs e)
+        {
+            dynamic config = ConfigurationHelper.getConfiguration();
+            int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterPosicoes.Intervalo);
+
+            var servico = new ObterVeiculosAutotracJobService();
+            var frm = new frmIntegrador(servico, intervalo);
+            frm.Text = "Integração de posições - AUTOTRAC";
             frm.Show();
         }
     }

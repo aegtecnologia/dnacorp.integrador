@@ -41,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="dominios\PosicaoAutotrac.cs" />
     <Compile Include="dominios\PosicaoJabur.cs" />
     <Compile Include="dominios\PosicaoSascar.cs" />
+    <Compile Include="dominios\VeiculoAutotrac.cs" />
     <Compile Include="dominios\VeiculoJabur.cs" />
     <Compile Include="dominios\VeiculoSascar.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -37,6 +37,9 @@
             this.sascarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuObterVeiculosSascar = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuObterPosicoesSascar = new System.Windows.Forms.ToolStripMenuItem();
+            this.autotracToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuObterVeiculosAutotrac = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuObterPosicoesAutotrac = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -62,7 +65,8 @@
             // 
             this.comandosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.jaburToolStripMenuItem,
-            this.sascarToolStripMenuItem});
+            this.sascarToolStripMenuItem,
+            this.autotracToolStripMenuItem});
             this.comandosToolStripMenuItem.Name = "comandosToolStripMenuItem";
             this.comandosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.comandosToolStripMenuItem.Text = "Comandos";
@@ -79,14 +83,14 @@
             // mnuObterPosicoesJabur
             // 
             this.mnuObterPosicoesJabur.Name = "mnuObterPosicoesJabur";
-            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(150, 22);
             this.mnuObterPosicoesJabur.Text = "ObterPosicoes";
             this.mnuObterPosicoesJabur.Click += new System.EventHandler(this.mnuObterPosicoesJabur_Click);
             // 
             // mnuObterVeiculosJabur
             // 
             this.mnuObterVeiculosJabur.Name = "mnuObterVeiculosJabur";
-            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(150, 22);
             this.mnuObterVeiculosJabur.Text = "ObterVeiculos";
             this.mnuObterVeiculosJabur.Click += new System.EventHandler(this.mnuObterVeiculosJabur_Click);
             // 
@@ -112,6 +116,29 @@
             this.mnuObterPosicoesSascar.Size = new System.Drawing.Size(180, 22);
             this.mnuObterPosicoesSascar.Text = "ObterPosicoes";
             this.mnuObterPosicoesSascar.Click += new System.EventHandler(this.mnuObterPosicoesSascar_Click);
+            // 
+            // autotracToolStripMenuItem
+            // 
+            this.autotracToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuObterVeiculosAutotrac,
+            this.mnuObterPosicoesAutotrac});
+            this.autotracToolStripMenuItem.Name = "autotracToolStripMenuItem";
+            this.autotracToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.autotracToolStripMenuItem.Text = "Autotrac";
+            // 
+            // mnuObterVeiculosAutotrac
+            // 
+            this.mnuObterVeiculosAutotrac.Name = "mnuObterVeiculosAutotrac";
+            this.mnuObterVeiculosAutotrac.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterVeiculosAutotrac.Text = "ObterVeiculos";
+            this.mnuObterVeiculosAutotrac.Click += new System.EventHandler(this.MnuObterVeiculosAutotrac_Click);
+            // 
+            // mnuObterPosicoesAutotrac
+            // 
+            this.mnuObterPosicoesAutotrac.Name = "mnuObterPosicoesAutotrac";
+            this.mnuObterPosicoesAutotrac.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesAutotrac.Text = "ObterPosicoes";
+            this.mnuObterPosicoesAutotrac.Click += new System.EventHandler(this.MnuObterPosicoesAutotrac_Click);
             // 
             // frmHome
             // 
@@ -142,5 +169,8 @@
         private System.Windows.Forms.ToolStripMenuItem sascarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuObterVeiculosSascar;
         private System.Windows.Forms.ToolStripMenuItem mnuObterPosicoesSascar;
+        private System.Windows.Forms.ToolStripMenuItem autotracToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuObterVeiculosAutotrac;
+        private System.Windows.Forms.ToolStripMenuItem mnuObterPosicoesAutotrac;
     }
 }
