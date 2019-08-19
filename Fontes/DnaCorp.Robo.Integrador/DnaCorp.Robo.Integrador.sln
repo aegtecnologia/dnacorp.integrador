@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnaCorp.Robo.Integrador.UI", "DnaCorp.Robo.Integrador.UI\DnaCorp.Robo.Integrador.UI.csproj", "{A77DDA51-16BD-4FAF-9F18-4614DD7D351D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain - 0", "Domain - 0", "{15A716BE-C251-4C4D-ABF4-E26B2DFD59BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnaCorp.Robo.Integrador.Domain", "DnaCorp.Robo.Integrador.Domain\DnaCorp.Robo.Integrador.Domain.csproj", "{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infra -1", "Infra -1", "{AF7DBBA0-E028-4C5D-B90A-467BA0F711FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnaCorp.Robo.Integrador.Infra", "DnaCorp.Robo.Integrador.Infra\DnaCorp.Robo.Integrador.Infra.csproj", "{E6A83419-A8B6-4D64-A492-D78F18683440}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service - 2", "Service - 2", "{58994902-56F9-4177-AD9C-4377419270E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DnaCorp.Robo.Integrador.Service", "DnaCorp.Robo.Integrador.Service\DnaCorp.Robo.Integrador.Service.csproj", "{EA8AFAF4-476E-4258-BB2D-55345B274DAD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI - 3", "UI - 3", "{2003EB8E-5FB2-4A8D-A6E4-C5D8A757F39C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A77DDA51-16BD-4FAF-9F18-4614DD7D351D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A77DDA51-16BD-4FAF-9F18-4614DD7D351D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A77DDA51-16BD-4FAF-9F18-4614DD7D351D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A77DDA51-16BD-4FAF-9F18-4614DD7D351D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6A83419-A8B6-4D64-A492-D78F18683440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6A83419-A8B6-4D64-A492-D78F18683440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6A83419-A8B6-4D64-A492-D78F18683440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6A83419-A8B6-4D64-A492-D78F18683440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8AFAF4-476E-4258-BB2D-55345B274DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8AFAF4-476E-4258-BB2D-55345B274DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8AFAF4-476E-4258-BB2D-55345B274DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8AFAF4-476E-4258-BB2D-55345B274DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A77DDA51-16BD-4FAF-9F18-4614DD7D351D} = {2003EB8E-5FB2-4A8D-A6E4-C5D8A757F39C}
+		{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10} = {15A716BE-C251-4C4D-ABF4-E26B2DFD59BC}
+		{E6A83419-A8B6-4D64-A492-D78F18683440} = {AF7DBBA0-E028-4C5D-B90A-467BA0F711FE}
+		{EA8AFAF4-476E-4258-BB2D-55345B274DAD} = {58994902-56F9-4177-AD9C-4377419270E1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2B11586-0813-473E-BFC8-512FD4782AAA}
+	EndGlobalSection
+EndGlobal
