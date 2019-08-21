@@ -116,6 +116,7 @@ GETDATE(),
                         Cidade = msg.cidade,
                         UF = msg.uf,
                         Endereco = msg.rua,
+                        Velocidade = Convert.ToInt32(msg.velocidade)
                     });
                 }
             }
@@ -155,6 +156,7 @@ getdate(),
 '{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
 '{p.Latitude}',
 '{p.Longitude}',
+{p.Velocidade.ToString()},
 '{p.UF}',
 '{p.Cidade}',
 '{p.Endereco?.Replace("'", "") ?? ""}');");

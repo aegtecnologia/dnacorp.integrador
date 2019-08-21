@@ -24,7 +24,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Jabur.ObterPosicoes.Intervalo);
 
-            var servico = new ObterVeiculosJaburJobService();
+            var servico = new ObterPosicoesJaburJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de posições - JABUR";
             frm.Show();
@@ -35,7 +35,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Jabur.ObterVeiculos.Intervalo);
 
-            var servico = new ObterPosicoesJaburJobService();
+            var servico = new ObterVeiculosJaburJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de veiculos - JABUR";
             frm.Show();
@@ -51,7 +51,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Sascar.ObterVeiculos.Intervalo);
 
-            var servico = new ObterPosicoesSascarJobService();
+            var servico = new ObterVeiculosSascarJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de veiculos - SASCAR";
             frm.Show();
@@ -62,7 +62,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Sascar.ObterPosicoes.Intervalo);
 
-            var servico = new ObterVeiculosSascarJobService();
+            var servico = new ObterPosicoesSascarJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de posições - SASCAR";
             frm.Show();
@@ -73,7 +73,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterVeiculos.Intervalo);
 
-            var servico = new ObterPosicoesSascarJobService();
+            var servico = new ObterVeiculosSascarJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de veiculos - AUTOTRAC";
             frm.Show();
@@ -84,7 +84,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             dynamic config = ConfigurationHelper.getConfiguration();
             int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterPosicoes.Intervalo);
 
-            var servico = new ObterVeiculosAutotracJobService();
+            var servico = new ObterPosicoesAutotracJobService();
             var frm = new frmIntegrador(servico, intervalo);
             frm.Text = "Integração de posições - AUTOTRAC";
             frm.Show();

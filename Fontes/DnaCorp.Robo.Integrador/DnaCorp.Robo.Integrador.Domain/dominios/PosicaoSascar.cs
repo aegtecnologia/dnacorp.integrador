@@ -17,5 +17,6 @@ namespace DnaCorp.Robo.Integrador.Domain.dominios
         public string UF { get; set; }
         public string Cidade { get; set; }
         public string Endereco { get; set; }
+        public int Velocidade { get; set; }
     }
 }
