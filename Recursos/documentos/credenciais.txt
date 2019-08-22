@@ -1,14 +1,14 @@
 onixsat
 endereco: http://webservice.onixsat.com.br
 usuario: 03901499000104
-senha: 16617
+senha: Dna@56%
 usuario: 04900055000109
 senha: GV@2792!
 
 sascar
 endereco: http://sasintegra.sascar.com.br/SasIntegra/SasIntegraWSService?wsdl
 usuario: interage
-senha: InteragePLt@19
+senha: Dna@56%
 
 omnilink
 usuario: interage
