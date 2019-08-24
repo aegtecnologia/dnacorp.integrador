@@ -204,8 +204,8 @@ GETDATE(),
             buffer = output.ToArray();
             output.Dispose();
             // transforma resposta em string para leitura xml
-            result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
-            //result = UTF8Encoding.UTF8.GetString(buffer);
+            //result = UTF8Encoding.UTF8.GetString(Decompress(buffer));
+            result = Unzip(buffer);
 
             return result;
         }
@@ -263,7 +263,35 @@ GETDATE(),
                 throw new Exception(msg.erro);
             }
         }
- 
+
+        private string Unzip(byte[] zippedBuffer)
+        {
+            using (var zippedStream = new MemoryStream(zippedBuffer))
+            {
+                using (var archive = new ZipArchive(zippedStream))
+                {
+                    var entry = archive.Entries.FirstOrDefault();
+
+                    if (entry != null)
+                    {
+                        using (var unzippedEntryStream = entry.Open())
+                        {
+                            using (var ms = new MemoryStream())
+                            {
+                                unzippedEntryStream.CopyTo(ms);
+                                var unzippedArray = ms.ToArray();
+
+                                return UTF8Encoding.UTF8.GetString(unzippedArray);
+                                //return Encoding.Default.GetString(unzippedArray);
+                            }
+                        }
+                    }
+
+                    return null;
+                }
+            }
+        }
+
     }
 
     
