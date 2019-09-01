@@ -1,0 +1,24 @@
+Claudio,
+
+ 
+
+Boa noite!
+
+ 
+
+Segue a chave de acesso ao serviço ADE para a DNA Solutions (ambiente @DNASOLUTIONS). Abaixo os dados e instruções iniciais:
+
+ 
+
+Usuário a ser utilizado: ade@dnasolutions
+
+ 
+
+Chave..........................: 17fb7ddf73af485cbed6ab70dd512d5c
+
+ 
+
+Link de acesso.............: https://aapi.autotrac-online.com.br/adeapi
+
+https://aapi.autotrac-online.com.br/adeapi/v1/accountsOcp-Apim-Subscription-Key | 17fb7ddf73af485cbed6ab70dd512d5c
+ade@dnasolutions | Dna@56%

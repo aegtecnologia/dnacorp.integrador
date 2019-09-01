@@ -13,6 +13,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
         private string Endereco { get; set; }
         private string Usuario { get; set; }
         private string Senha { get; set; }
+        private string Chave { get; set; }
         private string ContaEmpresa { get; set; }
         private bool Ativo { get; set; }
 
@@ -27,6 +28,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
             Endereco = Convert.ToString(config.Rastreadores.Autotrac.Endereco);
             Usuario = Convert.ToString(config.Rastreadores.Autotrac.Usuario);
             Senha = Convert.ToString(config.Rastreadores.Autotrac.Senha);
+            Chave = Convert.ToString(config.Rastreadores.Autotrac.Chave);
             ContaEmpresa = Convert.ToString(config.Rastreadores.Autotrac.Conta);
             Ativo = Convert.ToBoolean(config.Rastreadores.Autotrac.ObterVeiculos.Ativo);
 
@@ -40,9 +42,15 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
             {
                 response.DataInicial = DateTime.Now;
 
+                if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
+
                 if (!Ativo) throw new Exception("Job inativo");
 
-                var veiculos = ObterVeiculos();
+                var conta = ObterConta();
+
+                throw new Exception("teste");
+
+                var veiculos = ObterVeiculos(conta.Data[0].Code);
 
                 PersistirDados(veiculos);
 
@@ -86,11 +94,31 @@ GETDATE(),
             }
         }
 
-        private List<VeiculoAutotrac> ObterVeiculos()
+        private GetContaResponse ObterConta()
+        {
+            var client = new HttpClient();
+            var request = $"accounts";
+
+            client.BaseAddress = new Uri(Endereco);
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
+            client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
+
+            HttpResponseMessage response = client.GetAsync(request).Result;
+
+            if (!response.IsSuccessStatusCode) throw new Exception($"Falha na requisição de contas");
+
+            var jsonString = response.Content.ReadAsStringAsync().Result;
+            var dataResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<List<GetContaItemResponse>>(jsonString);
+
+            return new GetContaResponse() { Data = dataResponse };
+        }
+
+
+        private List<VeiculoAutotrac> ObterVeiculos(int conta)
         {
             var veiculos = new List<VeiculoAutotrac>();
             var client = new HttpClient();
-            var request = $"accounts/{ContaEmpresa}/vehicles";
+            var request = $"accounts/{conta}/vehicles";
 
             client.BaseAddress = new Uri(Endereco);
             client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
@@ -157,6 +185,20 @@ getdate(),
             public int Limit { get; set; }
             public int Offset { get; set; }
             public bool IsLastPage { get; set; }
+        }
+
+        internal class GetContaResponse
+        {
+            public List<GetContaItemResponse> Data { get; set; }
+        }
+
+        internal class GetContaItemResponse
+        {
+            public int Code { get; set; }
+            public string Name { get; set; }
+            public int FamilyNumber { get; set; }
+            public string FamilyDescription { get; set; }
+            public int Number { get; set; }
         }
 
     }

@@ -15,6 +15,11 @@ usuario: interage
 senha: interage
 
 autotrac
+homologacao
 url: https://www.autotrac-online.com.br/sandboxadeapi/documentation/index
 usuario: teste
 senha: teste
+producao
+url: https://aapi.autotrac-online.com.br/adeapi
+usuario: ade@dnasolutions
+senha: Dna@56%

@@ -59,6 +59,7 @@
     <Compile Include="JOB\ObterDadosResponse.cs" />
     <Compile Include="JOB\ObterPosicoesAutotracJobService.cs" />
     <Compile Include="JOB\ObterPosicoesJaburJobService.cs" />
+    <Compile Include="JOB\ObterPosicoesOmnilinkJobService.cs" />
     <Compile Include="JOB\ObterPosicoesSascarJobService.cs" />
     <Compile Include="JOB\ObterVeiculosAutotracJobService.cs" />
     <Compile Include="JOB\ObterVeiculosJaburJobService.cs" />
