@@ -48,9 +48,9 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
                 var posicoes = ObterPosicoes();
 
-               // PersistirDados(posicoes);
+                // PersistirDados(posicoes);
 
-                Criar_Log($"{nameof(ObterPosicoesOmnilinkJobService)} - Processado com sucesso", true);
+                //Criar_Log($"{nameof(ObterPosicoesOmnilinkJobService)} - Processado com sucesso", true);
                 response.TotalRegistros = posicoes.Count;
                 response.Mensagem = "Processado com sucesso!";
             }
@@ -89,38 +89,44 @@ GETDATE(),
                 //LogHelper.CriarLog(mensagem, sucesso);
             }
         }
-        public List<PosicaoSascar> ObterPosicoes()
+        private List<ObterPosicoesOmnilinkResponse> ObterPosicoes()
         {
-            var posicoes = new List<PosicaoSascar>();
+            var posicoes = new List<ObterPosicoesOmnilinkResponse>();
             var request = MontaRequisicao();
-            var xmlResponse = RequestXml(request);
+            //var xmlResponse = RequestXml(request);
 
+            
             //ValidaRetorno(xmlResponse);
 
-            using (MemoryStream ms = new MemoryStream())
+            var xml = new XmlDocument();
+            xml.Load(@"c:\anderson\omnilink-request-teste.xml");
+            //xml.LoadXml(xmlResponse);
+            //xml.Save(@"c:\anderson\omnilink-request.xml");
+
+            //throw new Exception("teste");
+
+            var mensagens = xml.GetElementsByTagName("TeleEvento");
+            foreach (XmlNode no in mensagens)
             {
-                var xml = new XmlDocument();
-                xml.LoadXml(xmlResponse);
-                var mensagens = xml.GetElementsByTagName("ObtemEventosNormaisResult");
-                foreach (XmlNode no in mensagens)
+                string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+                var p = new ObterPosicoesOmnilinkResponse()
                 {
-                    string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-                    dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-                    posicoes.Add(new PosicaoSascar()
-                    {
-                        PosicaoId = Convert.ToInt64(msg.idPacote),
-                        VeiculoId = (int)msg.idVeiculo,
-                        Data = msg.dataPosicao,
-                        DataCadastro = DateTime.Now,
-                        Latitude = Convert.ToString(msg.latitude),
-                        Longitude = Convert.ToString(msg.longitude),
-                        Cidade = msg.cidade,
-                        UF = msg.uf,
-                        Endereco = msg.rua,
-                        Velocidade = Convert.ToInt32(msg.velocidade)
-                    });
-                }
+                    NumeroSequencia = msg.NumeroSequencia,
+                    DataHoraEmissao = msg.DataHoraEmissao,
+                    IdTerminal = msg.IdTerminal,
+                    Latitude = msg.Latitude,
+                    Longitude = msg.Longitude,
+                    Localizacao = msg.Localizacao,
+                    Velocidade = msg.Velocidade
+                };
+
+                p.TratarDados();
+
+                posicoes.Add(p);
             }
+
+
 
             return posicoes;
         }
@@ -182,6 +188,11 @@ getdate(),
             return request;
         }
 
+        private string RequestXmlMock()
+        {
+            var xml = @"<?xml version='1.0' encoding='utf - 8'?><soap:Envelope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'><soap:Body><ObtemEventosNormaisResponse xmlns='http://microsoft.com/webservices/'><ObtemEventosNormaisResult> &lt;TeleEvento&gt; &lt;NumeroSequencia&gt;30673&lt;/NumeroSequencia&gt; &lt;IdSeqMsg&gt; 51778 &lt;/IdSeqMsg&gt;  &lt;Origem&gt; 0 &lt;/Origem&gt;  &lt;Destino&gt; 0 &lt;/Destino&gt;  &lt;TipoMsg&gt; 1 &lt;/TipoMsg&gt;  &lt;CodMsg&gt; 92 &lt;/CodMsg&gt;  &lt;DataHoraEmissao&gt; 03/09/2019 18:51:26 &lt;/DataHoraEmissao&gt;  &lt;Prioridade&gt; 0 &lt;/Prioridade&gt;  &lt;TamanhoMensagem&gt; 48 &lt;/TamanhoMensagem&gt;  &lt;IdTerminal&gt; D128C &lt;/IdTerminal&gt;  &lt;Versao_Protocolo&gt; 03 &lt;/Versao_Protocolo&gt;  &lt;StatusVeic&gt; 2 &lt;/StatusVeic&gt;  &lt;DataHoraEvento&gt; 03/09/2019 17:57:15 &lt;/DataHoraEvento&gt;  &lt;Ignicao&gt; 1 &lt;/Ignicao&gt;  &lt;Validade&gt; 0 &lt;/Validade&gt;  &lt;Rumo&gt; 6 &lt;/Rumo&gt;  &lt;Velocidade&gt; 86 &lt;/Velocidade&gt;  &lt;Latitude&gt; 021_55_10_6_S &lt;/Latitude&gt;  &lt;Longitude&gt; 045_36_10_0_W &lt;/Longitude&gt;  &lt;Hodometro&gt; 568476 &lt;/Hodometro&gt;  &lt;Intervalo&gt; 7 &lt;/Intervalo&gt;  &lt;IntervaloDif&gt; 255 &lt;/IntervaloDif&gt;  &lt;LacreCarreta&gt; 1 &lt;/LacreCarreta&gt;  &lt;LacreCabine&gt; 1 &lt;/LacreCabine&gt;  &lt;LacreBau&gt; 0 &lt;/LacreBau&gt;  &lt;FalhaAbend&gt; 0 &lt;/FalhaAbend&gt;  &lt;FalhaFlash&gt; 0 &lt;/FalhaFlash&gt;  &lt;HodoInop&gt; 0 &lt;/HodoInop&gt;  &lt;PerdaGPS&gt; 0 &lt;/PerdaGPS&gt;  &lt;BotaoPanico&gt; 0 &lt;/BotaoPanico&gt;  &lt;PortaBau&gt; 1 &lt;/PortaBau&gt;  &lt;PortaDireita&gt; 1 &lt;/PortaDireita&gt;  &lt;PortaEsquerda&gt; 1 &lt;/PortaEsquerda&gt;  &lt;EngateCarreta&gt; 1 &lt;/EngateCarreta&gt;  &lt;ChaveDesbloqueio&gt; 0 &lt;/ChaveDesbloqueio&gt;  &lt;BotaoBau&gt; 2 &lt;/BotaoBau&gt;  &lt;EstadoTerminal&gt; 1 &lt;/EstadoTerminal&gt;  &lt;FlagFalhaTravaMot&gt; 0 &lt;/FlagFalhaTravaMot&gt;  &lt;FalhaTravaMot&gt; 2 &lt;/FalhaTravaMot&gt;  &lt;BatExtOut&gt; 0 &lt;/BatExtOut&gt;  &lt;BatIntOut&gt; 0 &lt;/BatIntOut&gt;  &lt;ChaveArmadilha&gt; 0 &lt;/ChaveArmadilha&gt;  &lt;Historico&gt; 1 &lt;/Historico&gt;  &lt;Tecnologia&gt; 2 &lt;/Tecnologia&gt;  &lt;DataHoraCnx&gt;  &lt;/DataHoraCnx&gt;  &lt;Serial&gt; 0 &lt;/Serial&gt;  &lt;IdSeqVeiculo&gt; 94002 &lt;/IdSeqVeiculo&gt;  &lt;IP&gt; 10.176.18.235 &lt;/IP&gt;  &lt;Port&gt; 0 &lt;/Port&gt;  &lt;Intervalo_OP&gt; 0 &lt;/Intervalo_OP&gt;  &lt;Intervalo_IP_SMS&gt; 120 &lt;/Intervalo_IP_SMS&gt;  &lt;TecnologiaIntervalo&gt; 2 &lt;/TecnologiaIntervalo&gt;  &lt;UsandoDataHoraLES&gt; 0 &lt;/UsandoDataHoraLES&gt;  &lt;Central_CFG_Rast&gt; 1 &lt;/Central_CFG_Rast&gt;  &lt;Id_Terminal_Sat&gt; 0 &lt;/Id_Terminal_Sat&gt;  &lt;DataHoraLES&gt; 0 &lt;/DataHoraLES&gt;  &lt;MessageID&gt; 0 &lt;/MessageID&gt;  &lt;CentralIntervalo&gt; 0 &lt;/CentralIntervalo&gt;  &lt;EvtSateliteDuplicado&gt; 0 &lt;/EvtSateliteDuplicado&gt;  &lt;Operadora&gt; 2 &lt;/Operadora&gt;  &lt;ModeloRastreador&gt; 8 &lt;/ModeloRastreador&gt;  &lt;Localizacao&gt; 3,10 km a SSO de Sao Goncalo do Sapucai - MG &lt;/Localizacao&gt;  &lt;/TeleEvento&gt;</ObtemEventosNormaisResult></ObtemEventosNormaisResponse></soap:Body></soap:Envelope>";
+            return xml;
+        }
         private string RequestXml(string strRequest)
         {
             string result = string.Empty;
@@ -221,6 +232,36 @@ getdate(),
             request.Method = "POST";
             request.ContentType = "text/xml";
             return request;
+        }
+
+        internal class ObterPosicoesOmnilinkResponse
+        {
+            public string NumeroSequencia { get; set; }
+            public string DataHoraEmissao { get; set; }
+            public string IdTerminal { get; set; }
+            public string Latitude { get; set; }
+            public string Longitude { get; set; }
+            public string Localizacao { get; set; }
+            public string Velocidade { get; set; }
+
+            public void TratarDados()
+            {
+                NumeroSequencia = NumeroSequencia.TrimEnd().TrimStart();
+                DataHoraEmissao= DataHoraEmissao.TrimEnd().TrimStart();
+                IdTerminal = IdTerminal.TrimEnd().TrimStart();
+                Latitude = Latitude.TrimEnd().TrimStart();
+                Longitude = Longitude.TrimEnd().TrimStart();
+                Localizacao = Localizacao.TrimEnd().TrimStart();
+                Velocidade = Velocidade.TrimEnd().TrimStart();
+
+                string[] dataHora = DataHoraEmissao.Split(' ');
+                string[] diaMesAno = dataHora[0].Split('/');
+                DataHoraEmissao = $"{diaMesAno[2]}-{diaMesAno[1]}-{diaMesAno[0]} {dataHora[1]}";
+                IdTerminal = Convert.ToInt32(IdTerminal, 16).ToString();
+
+
+            }
+         
         }
     }
 }
