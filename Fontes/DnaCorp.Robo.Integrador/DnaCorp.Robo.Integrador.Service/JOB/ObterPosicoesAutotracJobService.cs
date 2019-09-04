@@ -17,6 +17,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
         private string Usuario { get; set; }
         private string Senha { get; set; }
         private string ContaEmpresa { get; set; }
+        private string Chave { get; set; }
         private bool Ativo { get; set; }
 
         private Conexao _conexao;
@@ -31,6 +32,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
             Usuario = Convert.ToString(config.Rastreadores.Autotrac.Usuario);
             Senha = Convert.ToString(config.Rastreadores.Autotrac.Senha);
             ContaEmpresa = Convert.ToString(config.Rastreadores.Autotrac.Conta);
+            Chave = Convert.ToString(config.Rastreadores.Autotrac.Chave);
             Ativo = Convert.ToBoolean(config.Rastreadores.Autotrac.ObterPosicoes.Ativo);
 
             _conexao.Configura(provider);
@@ -94,6 +96,9 @@ GETDATE(),
             var client = new HttpClient();
             client.BaseAddress = new Uri(Endereco);
 
+
+            //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
             client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
 
             var request = $"accounts/{ContaEmpresa}/vehicles/{veiculoId}/positions";

@@ -46,11 +46,11 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
                 if (!Ativo) throw new Exception("Job inativo");
 
-                var conta = ObterConta();
+                //var conta = ObterConta();
 
-                throw new Exception("teste");
+                //throw new Exception("teste");
 
-                var veiculos = ObterVeiculos(conta.Data[0].Code);
+                var veiculos = ObterVeiculos(Convert.ToInt32(ContaEmpresa));
 
                 PersistirDados(veiculos);
 
@@ -100,6 +100,7 @@ GETDATE(),
             var request = $"accounts";
 
             client.BaseAddress = new Uri(Endereco);
+            client.DefaultRequestHeaders.Add("Content-Type", "application/json");
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
             client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
 
@@ -121,6 +122,9 @@ GETDATE(),
             var request = $"accounts/{conta}/vehicles";
 
             client.BaseAddress = new Uri(Endereco);
+
+            //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
             client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
 
             HttpResponseMessage response = client.GetAsync(request).Result;
