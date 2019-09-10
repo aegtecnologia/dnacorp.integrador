@@ -99,7 +99,7 @@ GETDATE(),
             //ValidaRetorno(xmlResponse);
 
             var xml = new XmlDocument();
-            xml.Load(@"c:\anderson\omnilink-request-teste.xml");
+            xml.Load(@"C:\Anderson\dnacorp.integrador\Recursos\documentos\omnilink\omnilink-request-teste.xml");
             //xml.LoadXml(xmlResponse);
             //xml.Save(@"c:\anderson\omnilink-request.xml");
 
@@ -259,6 +259,9 @@ getdate(),
                 DataHoraEmissao = $"{diaMesAno[2]}-{diaMesAno[1]}-{diaMesAno[0]} {dataHora[1]}";
                 IdTerminal = Convert.ToInt32(IdTerminal, 16).ToString();
 
+                PositionHelper.ConverterPosicaoOmnilink(Latitude, Longitude, out var lat, out var lng);
+                Latitude = lat;
+                Longitude = lng;
 
             }
          
