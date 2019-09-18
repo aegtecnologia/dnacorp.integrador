@@ -43,15 +43,7 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
         private void frmHome_Load(object sender, EventArgs e)
         {
-            //PositionHelper.Teste(out var lat, out var lng);
-            //this.Text = $"lat: {lat} | lng: {lng}";
-
-            //var latitude = "022_51_35_4_S";
-            //var longitude = "047_10_13_0_W";
-
-            //PositionHelper.ConverterPosicaoOmnilink(ref latitude, ref longitude);
-            //this.Text = $"lat: {latitude} | lng: {longitude}";
-
+            
 
         }
 

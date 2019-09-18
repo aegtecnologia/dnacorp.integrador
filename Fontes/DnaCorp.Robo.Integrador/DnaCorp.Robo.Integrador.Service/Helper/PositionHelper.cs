@@ -12,23 +12,23 @@ namespace DnaCorp.Robo.Integrador.Service.Helper
         //referencia: https://coordinatesharp.com/DeveloperGuide
         //referencia: https://www.nuget.org/packages/CoordinateSharp/
 
-        public static void Teste(out string lat, out string lng)
-        {
-            //var latitude = "022_51_35_4_S";
-           // var longitude = "047_10_13_0_W";
+        //public static void Teste(out string lat, out string lng)
+        //{
+        //    //var latitude = "022_51_35_4_S";
+        //   // var longitude = "047_10_13_0_W";
 
-            Coordinate c = new Coordinate();
-            //c.Latitude = new CoordinatePart(40, 34, 36.552, CoordinatesPosition.N);
-            //c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatesPosition.W);
-            c.Latitude = new CoordinatePart(22, 51, 35.400, CoordinatesPosition.S);
-            c.Longitude = new CoordinatePart(47, 10, 13.000, CoordinatesPosition.W);
+        //    Coordinate c = new Coordinate();
+        //    //c.Latitude = new CoordinatePart(40, 34, 36.552, CoordinatesPosition.N);
+        //    //c.Longitude = new CoordinatePart(70, 45, 24.408, CoordinatesPosition.W);
+        //    c.Latitude = new CoordinatePart(22, 51, 35.400, CoordinatesPosition.S);
+        //    c.Longitude = new CoordinatePart(47, 10, 13.000, CoordinatesPosition.W);
 
-            //c.Latitude.ToDouble();  // Returns 40.57682  (Signed Degree)
-            //c.Longitude.ToDouble(); // Returns -70.75678 (Signed Degree)
+        //    //c.Latitude.ToDouble();  // Returns 40.57682  (Signed Degree)
+        //    //c.Longitude.ToDouble(); // Returns -70.75678 (Signed Degree)
 
-            lat = c.Latitude.ToDouble().ToString();  // Returns 40.57682  (Signed Degree)
-            lng = c.Longitude.ToDouble().ToString(); // Returns -70.75678 (Signed Degree)
-        }
+        //    lat = c.Latitude.ToDouble().ToString();  // Returns 40.57682  (Signed Degree)
+        //    lng = c.Longitude.ToDouble().ToString(); // Returns -70.75678 (Signed Degree)
+        //}
 
         private static CoordinatesPosition TrataPos(string pos)
         {

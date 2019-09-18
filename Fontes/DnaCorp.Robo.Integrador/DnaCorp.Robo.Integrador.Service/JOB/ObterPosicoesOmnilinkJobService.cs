@@ -48,9 +48,9 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
                 var posicoes = ObterPosicoes();
 
-                // PersistirDados(posicoes);
+                PersistirDados(posicoes);
 
-                //Criar_Log($"{nameof(ObterPosicoesOmnilinkJobService)} - Processado com sucesso", true);
+                Criar_Log($"{nameof(ObterPosicoesOmnilinkJobService)} - Processado com sucesso", true);
                 response.TotalRegistros = posicoes.Count;
                 response.Mensagem = "Processado com sucesso!";
             }
@@ -77,7 +77,7 @@ GETDATE(),
 {(sucesso ? 1 : 0).ToString()},
 '{mensagem.Replace("'", "")}'
 )";
-                //_conexao.Executa(comando);
+                _conexao.Executa(comando);
 
             }
             catch (Exception erro)
@@ -86,21 +86,28 @@ GETDATE(),
             }
             finally
             {
-                //LogHelper.CriarLog(mensagem, sucesso);
+                LogHelper.CriarLog(mensagem, sucesso);
             }
         }
+
+        private void TrataXml(ref string xmlResponse)
+        {
+            xmlResponse = xmlResponse.Replace("&lt;", "<").Replace("&gt;", ">");
+        }
+
         private List<ObterPosicoesOmnilinkResponse> ObterPosicoes()
         {
             var posicoes = new List<ObterPosicoesOmnilinkResponse>();
             var request = MontaRequisicao();
-            //var xmlResponse = RequestXml(request);
+            var xmlResponse = RequestXml(request);
 
+            TrataXml(ref xmlResponse);
             
             //ValidaRetorno(xmlResponse);
 
             var xml = new XmlDocument();
-            xml.Load(@"C:\Anderson\dnacorp.integrador\Recursos\documentos\omnilink\omnilink-request-teste.xml");
-            //xml.LoadXml(xmlResponse);
+            //xml.Load(@"C:\Anderson\dnacorp.integrador\Recursos\documentos\omnilink\omnilink-request-teste.xml");
+            xml.LoadXml(xmlResponse);
             //xml.Save(@"c:\anderson\omnilink-request.xml");
 
             //throw new Exception("teste");
@@ -150,36 +157,48 @@ GETDATE(),
             }
         }
 
-        private void PersistirDados(List<PosicaoSascar> posicoes)
+        private void PersistirDados(List<ObterPosicoesOmnilinkResponse> posicoes)
         {
             StringBuilder sb = new StringBuilder();
 
             foreach (var p in posicoes)
             {
-                sb.AppendLine($@"insert into posicoes_sascar values (
-{p.PosicaoId},
-{p.VeiculoId.ToString()},
+                sb.AppendLine($@"insert into posicoes_omnilink values (
+{p.NumeroSequencia},
+{p.IdTerminal},
 getdate(),
-'{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
+'{p.DataHoraEmissao}',
 '{p.Latitude}',
 '{p.Longitude}',
-{p.Velocidade.ToString()},
-'{p.UF}',
-'{p.Cidade}',
-'{p.Endereco?.Replace("'", "") ?? ""}');");
+'{p.Localizacao}',
+{p.Velocidade.ToString()});");
             }
 
             _conexao.Executa(sb.ToString());
         }
+
+        private Int64 UltimoRegistro()
+        {
+            var consulta = "select ISNULL(MAX(POSICAOID),1) AS ULTIMO from DBO.POSICOES_OMNILINK";
+            var dt = _conexao.RetornaDT(consulta);
+            if (dt.Rows.Count > 0)
+                return Convert.ToInt64(dt.Rows[0][0]);
+            else
+                return 1;
+        }
+
         private string MontaRequisicao()
         {
+            var sequencial = UltimoRegistro();
+            sequencial = sequencial == 1 ? 2147483647 : sequencial;
+
             string request = $@"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:web='http://microsoft.com/webservices/'>
 <soapenv:Header/>
 <soapenv:Body>
         <web:ObtemEventosNormais> 
-             <web:Usuario>Interage</web:Usuario>
-                   <web:Senha>Dna@56%</web:Senha>               
-                        <web:UltimoSequencial>2147483647</web:UltimoSequencial>                    
+             <web:Usuario>{Usuario}</web:Usuario>
+                   <web:Senha>{Senha}</web:Senha>               
+                        <web:UltimoSequencial>{sequencial}</web:UltimoSequencial>                    
                           </web:ObtemEventosNormais>                     
                         </soapenv:Body>
                       </soapenv:Envelope>
