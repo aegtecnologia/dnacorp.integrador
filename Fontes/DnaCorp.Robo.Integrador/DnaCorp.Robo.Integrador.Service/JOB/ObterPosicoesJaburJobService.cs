@@ -182,7 +182,9 @@ getdate(),
 {p.Velocidade},
 '{p.UF}',
 '{p.Cidade?.Replace("'", "") ?? ""}',
-'{p.Endereco?.Replace("'", "") ?? ""}');");
+'{p.Endereco?.Replace("'", "") ?? ""}',
+{p.MacroID},
+'{p.MacroDescricao}');");
             }
 
             _conexao.Executa(sb.ToString());
