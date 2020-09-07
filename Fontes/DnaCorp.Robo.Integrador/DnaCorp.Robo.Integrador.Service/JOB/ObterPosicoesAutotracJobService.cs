@@ -28,15 +28,16 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
             dynamic config = ConfigurationHelper.getConfiguration();
             var provider = Convert.ToString(config.ConnectionStrings.DefaultConnection);
-            Endereco = Convert.ToString(config.Rastreadores.Autotrac.Endereco);
-            Usuario = Convert.ToString(config.Rastreadores.Autotrac.Usuario);
-            Senha = Convert.ToString(config.Rastreadores.Autotrac.Senha);
-            ContaEmpresa = Convert.ToString(config.Rastreadores.Autotrac.Conta);
+            Endereco = "https://www.autotrac-online.com.br/sandboxadeapi/v1/";//Convert.ToString(config.Rastreadores.Autotrac.Endereco);
+            Usuario = "teste";// Convert.ToString(config.Rastreadores.Autotrac.Usuario);
+            Senha = "teste";// Convert.ToString(config.Rastreadores.Autotrac.Senha);
+            ContaEmpresa = "3253"; Convert.ToString(config.Rastreadores.Autotrac.Conta);
             Chave = Convert.ToString(config.Rastreadores.Autotrac.Chave);
             Ativo = Convert.ToBoolean(config.Rastreadores.Autotrac.ObterPosicoes.Ativo);
 
             _conexao.Configura(provider);
         }
+
         public ObterDadosResponse Executa()
         {
             var response = new ObterDadosResponse();
@@ -91,39 +92,6 @@ GETDATE(),
             }
         }
 
-        private void ObterPosicaoPorVeiculo(int veiculoId, ref List<PosicaoAutotrac> posicoes)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(Endereco);
-
-
-            //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
-            client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
-
-            var request = $"accounts/{ContaEmpresa}/vehicles/{veiculoId}/positions";
-            HttpResponseMessage response = client.GetAsync(request).Result;
-
-            if (!response.IsSuccessStatusCode) throw new Exception($"Falha na requisição de posições");
-
-            var jsonString = response.Content.ReadAsStringAsync().Result;
-            var dataResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<GetPosicoesResponse>(jsonString);
-            var p = dataResponse.Data.Last();
-
-            posicoes.Add(new PosicaoAutotrac()
-            {
-                VeiculoEnd = p.VehicleAddress,
-                Data = p.PositionTime,
-                DataCadastro = DateTime.Now,
-                Endereco = p.Landmark,
-                Latitude = p.Latitude.ToString(),
-                Longitude = p.Longitude.ToString(),
-                Cidade = "",
-                UF = "",
-            });
-
-        }
-
         private List<PosicaoAutotrac> ObterPosicoes()
         {
             var posicoes = new List<PosicaoAutotrac>();
@@ -134,9 +102,42 @@ GETDATE(),
             return posicoes;
         }
 
+        private void ObterPosicaoPorVeiculo(int veiculoId, ref List<PosicaoAutotrac> posicoes)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri(Endereco);
+
+            //client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+            //client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", Chave);
+            client.DefaultRequestHeaders.Add("Authorization", $"Basic {Usuario}:{Senha}");
+
+            var request = $"accounts/{ContaEmpresa}/vehicles/{veiculoId}/positions?_limit=100&_offset=0";
+            HttpResponseMessage response = client.GetAsync(request).Result;
+
+            if (!response.IsSuccessStatusCode) throw new Exception($"Falha na requisição de posições");
+
+            var jsonString = response.Content.ReadAsStringAsync().Result;
+            var dataResponse = Newtonsoft.Json.JsonConvert.DeserializeObject<GetPosicoesResponse>(jsonString);
+            var p = dataResponse.Data.Last();
+
+            posicoes.Add(new PosicaoAutotrac()
+            {
+                VeiculoId = veiculoId,
+                PosicaoId = p.ID,
+                DataPosicao = p.PositionTime,
+                DataCadastro = DateTime.Now,
+                Endereco = p.Landmark,
+                Latitude = p.Latitude.ToString(),
+                Longitude = p.Longitude.ToString(),
+                UF = p.UF,
+                Referencia = p.Reference
+            });
+
+        }
+
         private int[] ObterListaDeVeiculosMock()
         {
-            return new int[] { 151 };
+            return new int[] { 151, 625 };
         }
 
         private List<int> ObterListaDeVeiculos()
@@ -155,17 +156,24 @@ GETDATE(),
 
             foreach (var p in posicoes)
             {
+                var posicaoID = _conexao.MaxId("posicoes_autotrac", "posicaoId", $"veiculoid={p.VeiculoId.ToString()}");
+
+                if (posicaoID >= p.PosicaoId)
+                    continue;
+
                 sb.AppendLine($@"insert into posicoes_autotrac values (
-{p.VeiculoEnd.ToString()},
+{p.PosicaoId.ToString()},
+{p.VeiculoId.ToString()},
 getdate(),
-'{p.Data.ToString("yyyy/MM/dd HH:mm:ss")}',
+'{p.DataPosicao.ToString("yyyy/MM/dd HH:mm:ss")}',
 '{p.Latitude}',
 '{p.Longitude}',
 '{p.UF}',
-'{p.Cidade}',
-'{p.Endereco}');");
+'{p.Endereco}',
+'{p.Referencia}');");
             }
 
+            if (sb.ToString().Length > 0)
             _conexao.Executa(sb.ToString());
         }
 
@@ -180,6 +188,8 @@ getdate(),
             public int Ignition { get; set; }
             public string Landmark { get; set; }
             public int TransmissionChannel { get; set; }
+            public string UF { get; set; }
+            public string Reference { get; set; }
         }
         internal class GetPosicoesResponse
         {

@@ -43,7 +43,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
             {
                 response.DataInicial = DateTime.Now;
                 if (!Ativo) throw new Exception("Job inativo");
-                if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
+               // if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
 
                 var posicoes = ObterPosicoes();
 

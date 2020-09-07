@@ -45,7 +45,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
                 response.DataInicial = DateTime.Now;
 
                 if (!Ativo) throw new Exception("Job inativo");
-                if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
+               // if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
 
                 var veiculos = ObterVeiculos();
                 PreparaBase();
@@ -130,6 +130,17 @@ GETDATE(),
             return request;
         }
 
+        private string MontaRequisicaoItensMacro()
+        {
+            string request = $@"<RequestItemMacro>
+<login>{Usuario}</login>
+<senha>{Senha}</senha>
+<todosItens>1</todosItens>
+</RequestItemMacro>";
+
+            return request;
+        }
+
         private List<VeiculoJabur> ObterVeiculos()
         {
             var veiculos = new List<VeiculoJabur>();
@@ -154,6 +165,34 @@ GETDATE(),
             }
 
             return veiculos;
+        }
+
+        public string ObterMacros()
+        {
+            var veiculos = new List<VeiculoJabur>();
+            var request = MontaRequisicaoItensMacro();
+            var xmlResponse = RequestXml(request);
+
+            return xmlResponse;
+
+            //ValidaRetorno(xmlResponse);
+
+            //var xml = new XmlDocument();
+            //xml.LoadXml(xmlResponse);
+            //var mensagens = xml.GetElementsByTagName("Veiculo");
+            //foreach (XmlNode no in mensagens)
+            //{
+            //    string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+            //    dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+            //    veiculos.Add(new VeiculoJabur()
+            //    {
+            //        VeiculoId = (int)msg.veiID,
+            //        Placa = msg.placa,
+            //        EspelhadoAte = msg.valEspelhamento
+            //    });
+            //}
+
+            //return veiculos;
         }
 
         private bool ContemRegistros()

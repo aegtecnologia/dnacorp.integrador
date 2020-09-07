@@ -101,5 +101,28 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             frm.Text = "Integração de posições - OMNILINK";
             frm.Show();
         }
+
+        private void mnuTesteMysql_Click(object sender, EventArgs e)
+        {
+            var f = new frmGerenciadorMySql();
+            f.Show();
+        }
+
+        private void obterPosicoesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dynamic config = ConfigurationHelper.getConfiguration();
+            int intervalo = Convert.ToInt32(config.Rastreadores.Sighra.ObterPosicoes.Intervalo);
+
+            var servico = new ObterPosicoesSighraJobService();
+            var frm = new frmIntegrador(servico, intervalo);
+            frm.Text = "Integração de posições - Sighra";
+            frm.Show();
+        }
+
+        private void testeIntegracaoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var f = new frmTesteIntegracao();
+            f.Show();
+        }
     }
 }

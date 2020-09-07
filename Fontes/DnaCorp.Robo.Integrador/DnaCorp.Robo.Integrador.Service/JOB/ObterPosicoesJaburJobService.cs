@@ -45,7 +45,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
                 response.DataInicial = DateTime.Now;
 
                 if (!Ativo) throw new Exception("Job inativo");
-                if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
+                //if (!ValidationHelper.IsValid()) throw new Exception("Job inválido");
 
                 var posicoes = ObterPosicoes();
 
@@ -92,6 +92,7 @@ GETDATE(),
             var posicoes = new List<PosicaoJabur>();
             var request = MontaRequisicao();
             var xmlResponse = RequestXml(request);
+            //var xmlResponse = RequestXmlMock();
 
             ValidaRetorno(xmlResponse);
 
@@ -119,6 +120,8 @@ GETDATE(),
                             Cidade = msg.mun,
                             UF = msg.uf,
                             Endereco = msg.rua,
+                            MacroID = msg?.tfrID == null ? 0 : Convert.ToInt32( msg?.tfrID),
+                            MacroDescricao = msg?.dMac ?? ""
                         });
                     }
                     catch (Exception erro)

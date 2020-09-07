@@ -40,8 +40,13 @@
             this.autotracToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuObterVeiculosAutotrac = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuObterPosicoesAutotrac = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuObterListaBranca = new System.Windows.Forms.ToolStripMenuItem();
             this.omnilinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuObterPosicoesOmnilink = new System.Windows.Forms.ToolStripMenuItem();
+            this.sighraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTesteMysql = new System.Windows.Forms.ToolStripMenuItem();
+            this.obterPosicoesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.testeIntegracaoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,7 +63,8 @@
             // menuToolStripMenuItem
             // 
             this.menuToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.comandosToolStripMenuItem});
+            this.comandosToolStripMenuItem,
+            this.testeIntegracaoToolStripMenuItem});
             this.menuToolStripMenuItem.Name = "menuToolStripMenuItem";
             this.menuToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
             this.menuToolStripMenuItem.Text = "Menu";
@@ -69,7 +75,8 @@
             this.jaburToolStripMenuItem,
             this.sascarToolStripMenuItem,
             this.autotracToolStripMenuItem,
-            this.omnilinkToolStripMenuItem});
+            this.omnilinkToolStripMenuItem,
+            this.sighraToolStripMenuItem});
             this.comandosToolStripMenuItem.Name = "comandosToolStripMenuItem";
             this.comandosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.comandosToolStripMenuItem.Text = "Comandos";
@@ -86,14 +93,14 @@
             // mnuObterPosicoesJabur
             // 
             this.mnuObterPosicoesJabur.Name = "mnuObterPosicoesJabur";
-            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(150, 22);
+            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(180, 22);
             this.mnuObterPosicoesJabur.Text = "ObterPosicoes";
             this.mnuObterPosicoesJabur.Click += new System.EventHandler(this.mnuObterPosicoesJabur_Click);
             // 
             // mnuObterVeiculosJabur
             // 
             this.mnuObterVeiculosJabur.Name = "mnuObterVeiculosJabur";
-            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(150, 22);
+            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(180, 22);
             this.mnuObterVeiculosJabur.Text = "ObterVeiculos";
             this.mnuObterVeiculosJabur.Click += new System.EventHandler(this.mnuObterVeiculosJabur_Click);
             // 
@@ -124,7 +131,8 @@
             // 
             this.autotracToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuObterVeiculosAutotrac,
-            this.mnuObterPosicoesAutotrac});
+            this.mnuObterPosicoesAutotrac,
+            this.mnuObterListaBranca});
             this.autotracToolStripMenuItem.Name = "autotracToolStripMenuItem";
             this.autotracToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.autotracToolStripMenuItem.Text = "Autotrac";
@@ -132,16 +140,22 @@
             // mnuObterVeiculosAutotrac
             // 
             this.mnuObterVeiculosAutotrac.Name = "mnuObterVeiculosAutotrac";
-            this.mnuObterVeiculosAutotrac.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterVeiculosAutotrac.Size = new System.Drawing.Size(164, 22);
             this.mnuObterVeiculosAutotrac.Text = "ObterVeiculos";
             this.mnuObterVeiculosAutotrac.Click += new System.EventHandler(this.MnuObterVeiculosAutotrac_Click);
             // 
             // mnuObterPosicoesAutotrac
             // 
             this.mnuObterPosicoesAutotrac.Name = "mnuObterPosicoesAutotrac";
-            this.mnuObterPosicoesAutotrac.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesAutotrac.Size = new System.Drawing.Size(164, 22);
             this.mnuObterPosicoesAutotrac.Text = "ObterPosicoes";
             this.mnuObterPosicoesAutotrac.Click += new System.EventHandler(this.MnuObterPosicoesAutotrac_Click);
+            // 
+            // mnuObterListaBranca
+            // 
+            this.mnuObterListaBranca.Name = "mnuObterListaBranca";
+            this.mnuObterListaBranca.Size = new System.Drawing.Size(164, 22);
+            this.mnuObterListaBranca.Text = "ObterListaBranca";
             // 
             // omnilinkToolStripMenuItem
             // 
@@ -154,12 +168,43 @@
             // mnuObterPosicoesOmnilink
             // 
             this.mnuObterPosicoesOmnilink.Name = "mnuObterPosicoesOmnilink";
-            this.mnuObterPosicoesOmnilink.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesOmnilink.Size = new System.Drawing.Size(150, 22);
             this.mnuObterPosicoesOmnilink.Text = "ObterPosicoes";
             this.mnuObterPosicoesOmnilink.Click += new System.EventHandler(this.mnuObterPosicoesOmnilink_Click);
             // 
+            // sighraToolStripMenuItem
+            // 
+            this.sighraToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuTesteMysql,
+            this.obterPosicoesToolStripMenuItem});
+            this.sighraToolStripMenuItem.Name = "sighraToolStripMenuItem";
+            this.sighraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sighraToolStripMenuItem.Text = "Sighra";
+            // 
+            // mnuTesteMysql
+            // 
+            this.mnuTesteMysql.Name = "mnuTesteMysql";
+            this.mnuTesteMysql.Size = new System.Drawing.Size(150, 22);
+            this.mnuTesteMysql.Text = "TesteMySql";
+            this.mnuTesteMysql.Click += new System.EventHandler(this.mnuTesteMysql_Click);
+            // 
+            // obterPosicoesToolStripMenuItem
+            // 
+            this.obterPosicoesToolStripMenuItem.Name = "obterPosicoesToolStripMenuItem";
+            this.obterPosicoesToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.obterPosicoesToolStripMenuItem.Text = "ObterPosicoes";
+            this.obterPosicoesToolStripMenuItem.Click += new System.EventHandler(this.obterPosicoesToolStripMenuItem_Click);
+            // 
+            // testeIntegracaoToolStripMenuItem
+            // 
+            this.testeIntegracaoToolStripMenuItem.Name = "testeIntegracaoToolStripMenuItem";
+            this.testeIntegracaoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testeIntegracaoToolStripMenuItem.Text = "Teste Integracao";
+            this.testeIntegracaoToolStripMenuItem.Click += new System.EventHandler(this.testeIntegracaoToolStripMenuItem_Click);
+            // 
             // frmHome
             // 
+            this.AccessibleDescription = "   ";
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(784, 561);
@@ -192,5 +237,10 @@
         private System.Windows.Forms.ToolStripMenuItem mnuObterPosicoesAutotrac;
         private System.Windows.Forms.ToolStripMenuItem omnilinkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mnuObterPosicoesOmnilink;
+        private System.Windows.Forms.ToolStripMenuItem mnuObterListaBranca;
+        private System.Windows.Forms.ToolStripMenuItem sighraToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuTesteMysql;
+        private System.Windows.Forms.ToolStripMenuItem obterPosicoesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem testeIntegracaoToolStripMenuItem;
     }
 }

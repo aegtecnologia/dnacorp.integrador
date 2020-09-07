@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>C:\AEG\pub\robo-interfile\</PublishUrl>
+    <PublishUrl>C:\AEG\pub\robo-interage\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -23,7 +23,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
-    <ApplicationRevision>7</ApplicationRevision>
+    <ApplicationRevision>12</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -81,6 +81,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\frmGerenciadorMySql.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\frmGerenciadorMySql.Designer.cs">
+      <DependentUpon>frmGerenciadorMySql.cs</DependentUpon>
+    </Compile>
     <Compile Include="Formularios\frmHome.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,13 +99,25 @@
     <Compile Include="Formularios\frmIntegrador.Designer.cs">
       <DependentUpon>frmIntegrador.cs</DependentUpon>
     </Compile>
+    <Compile Include="Formularios\frmTesteIntegracao.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Formularios\frmTesteIntegracao.Designer.cs">
+      <DependentUpon>frmTesteIntegracao.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Formularios\frmGerenciadorMySql.resx">
+      <DependentUpon>frmGerenciadorMySql.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmHome.resx">
       <DependentUpon>frmHome.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Formularios\frmIntegrador.resx">
       <DependentUpon>frmIntegrador.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Formularios\frmTesteIntegracao.resx">
+      <DependentUpon>frmTesteIntegracao.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -128,6 +146,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DnaCorp.Robo.Integrador.Domain\DnaCorp.Robo.Integrador.Domain.csproj">
+      <Project>{A0F50AE3-35FC-472F-B9CC-8B5659B1EE10}</Project>
+      <Name>DnaCorp.Robo.Integrador.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DnaCorp.Robo.Integrador.Infra\DnaCorp.Robo.Integrador.Infra.csproj">
+      <Project>{E6A83419-A8B6-4D64-A492-D78F18683440}</Project>
+      <Name>DnaCorp.Robo.Integrador.Infra</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DnaCorp.Robo.Integrador.Service\DnaCorp.Robo.Integrador.Service.csproj">
       <Project>{ea8afaf4-476e-4258-bb2d-55345b274dad}</Project>
       <Name>DnaCorp.Robo.Integrador.Service</Name>

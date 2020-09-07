@@ -1,16 +1,26 @@
-﻿using System;
+﻿using MySqlConnector;
+using System;
 using System.Data;
-using System.Data.SqlClient;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DnaCorp.Robo.Integrador.Infra.MSSQL
+namespace DnaCorp.Robo.Integrador.Infra.MySql
 {
-    public class Conexao
+    public class ConexaoMySql
     {
-        SqlConnection conn;
-        public void Configura(string provider)
+        MySqlConnection conn;
+        //public void Configura(string provider)
+        //{
+        //    if (string.IsNullOrEmpty(provider)) throw new Exception("Provider inválido!");
+        //    conn = new MySqlConnection(provider);
+        //}
+
+        public ConexaoMySql()
         {
-            if (string.IsNullOrEmpty(provider)) throw new Exception("Provider inválido!");
-            conn = new SqlConnection(provider);
+            string provider = "Server=10.10.100.15;User ID=interage;Password=SIGhRA@20;Database=mclient";
+            conn = new MySqlConnection(provider);
         }
 
         private void EnsureConnectionOpen()
@@ -58,13 +68,13 @@ namespace DnaCorp.Robo.Integrador.Infra.MSSQL
         {
             try
             {
-                var cmd = new SqlCommand();
+                var cmd = new MySqlCommand();
                 cmd.Connection = conn;
                 cmd.CommandText = comando;
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 10000;
 
-                var da = new SqlDataAdapter(cmd);
+                var da = new MySqlDataAdapter(cmd);
                 var dt = new DataTable();
                 da.Fill(dt);
 
