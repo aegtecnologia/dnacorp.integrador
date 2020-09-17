@@ -121,12 +121,17 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
             var idSequencial = UltimoRegistro();
 
-            var sql = $@"select top 1000 * from tTeleEvento with(nolock)
-where DataHoraEm > '{DateTime.Now.ToString("yyyy-MM-dd 00:00")}'
-and DataHoraEm < '{DateTime.Now.ToString("yyyy-MM-dd 23:59")}'
-and IDSequencia > {idSequencial}
-and Latitude <> 0 and Longitude <> 0
-order by IDSequencia";
+            var sql = $@"select top 1000
+isnull(te.Evento,0) as eventoId,
+isnull(e.Descricao,'') as eventoDescricao,
+te.* from tTeleEvento as te with(nolock)
+left join tEvento as e with(nolock)
+on te.Evento = e.Evento
+where te.DataHoraEm > '{DateTime.Now.ToString("yyyy-MM-dd 00:00")}'
+and te.DataHoraEm < '{DateTime.Now.ToString("yyyy-MM-dd 23:59")}'
+and te.IDSequencia > {idSequencial}
+and te.Latitude <> 0 and te.Longitude <> 0
+order by te.IDSequencia";
 
             var dt = _conexaoOmnilink.RetornaDT(sql);
 
@@ -140,7 +145,9 @@ order by IDSequencia";
                     Latitude = dr["Latitude"].ToString(),
                     Longitude = dr["Longitude"].ToString(),
                     Localizacao = dr["Localizacao"].ToString(),
-                    Velocidade = Convert.ToInt32(dr["Velocidade"])
+                    Velocidade = Convert.ToInt32(dr["Velocidade"]),
+                    EventoId = Convert.ToInt32(dr["eventoId"]),
+                    EventoDescricao = Convert.ToString(dr["eventoDescricao"])
                 };
 
                 posicoes.Add(p);
@@ -213,7 +220,9 @@ getdate(),
 '{p.Latitude}',
 '{p.Longitude}',
 '{p.Localizacao}',
-{p.Velocidade.ToString()});");
+{p.Velocidade.ToString()},
+{p.EventoId},
+'{p.EventoDescricao}');");
 
                 contador++;
 
@@ -327,6 +336,8 @@ getdate(),
             public string Longitude { get; set; }
             public string Localizacao { get; set; }
             public int Velocidade { get; set; }
+            public int EventoId { get; set; }
+            public string EventoDescricao { get; set; }
 
             //public void TratarDados()
             //{
