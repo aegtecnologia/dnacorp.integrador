@@ -67,6 +67,7 @@
     <Compile Include="JOB\ObterPosicoesOmnilinkJobService.cs" />
     <Compile Include="JOB\ObterPosicoesSascarJobService.cs" />
     <Compile Include="JOB\ObterPosicoesSighraJobService.cs" />
+    <Compile Include="JOB\ObterPosicoesSitaComJobService.cs" />
     <Compile Include="JOB\ObterVeiculosAutotracJobService.cs" />
     <Compile Include="JOB\ObterVeiculosJaburJobService.cs" />
     <Compile Include="JOB\ObterVeiculosSascarJobService.cs" />

@@ -124,5 +124,16 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
             var f = new frmTesteIntegracao();
             f.Show();
         }
+
+        private void obterPosicoesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            dynamic config = ConfigurationHelper.getConfiguration();
+            int intervalo = Convert.ToInt32(config.Rastreadores.SitaCom.ObterPosicoes.Intervalo);
+
+            var servico = new ObterPosicoesSitaComJobService();
+            var frm = new frmIntegrador(servico, intervalo);
+            frm.Text = "Integração de posições - SITACOM";
+            frm.Show();
+        }
     }
 }

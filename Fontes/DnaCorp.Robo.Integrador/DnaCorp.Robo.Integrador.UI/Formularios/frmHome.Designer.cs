@@ -47,6 +47,8 @@
             this.mnuTesteMysql = new System.Windows.Forms.ToolStripMenuItem();
             this.obterPosicoesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testeIntegracaoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sitaCOMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.obterPosicoesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,7 +78,8 @@
             this.sascarToolStripMenuItem,
             this.autotracToolStripMenuItem,
             this.omnilinkToolStripMenuItem,
-            this.sighraToolStripMenuItem});
+            this.sighraToolStripMenuItem,
+            this.sitaCOMToolStripMenuItem});
             this.comandosToolStripMenuItem.Name = "comandosToolStripMenuItem";
             this.comandosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.comandosToolStripMenuItem.Text = "Comandos";
@@ -116,14 +119,14 @@
             // mnuObterVeiculosSascar
             // 
             this.mnuObterVeiculosSascar.Name = "mnuObterVeiculosSascar";
-            this.mnuObterVeiculosSascar.Size = new System.Drawing.Size(150, 22);
+            this.mnuObterVeiculosSascar.Size = new System.Drawing.Size(180, 22);
             this.mnuObterVeiculosSascar.Text = "ObterVeiculos";
             this.mnuObterVeiculosSascar.Click += new System.EventHandler(this.mnuObterVeiculosSascar_Click);
             // 
             // mnuObterPosicoesSascar
             // 
             this.mnuObterPosicoesSascar.Name = "mnuObterPosicoesSascar";
-            this.mnuObterPosicoesSascar.Size = new System.Drawing.Size(150, 22);
+            this.mnuObterPosicoesSascar.Size = new System.Drawing.Size(180, 22);
             this.mnuObterPosicoesSascar.Text = "ObterPosicoes";
             this.mnuObterPosicoesSascar.Click += new System.EventHandler(this.mnuObterPosicoesSascar_Click);
             // 
@@ -202,6 +205,21 @@
             this.testeIntegracaoToolStripMenuItem.Text = "Teste Integracao";
             this.testeIntegracaoToolStripMenuItem.Click += new System.EventHandler(this.testeIntegracaoToolStripMenuItem_Click);
             // 
+            // sitaCOMToolStripMenuItem
+            // 
+            this.sitaCOMToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.obterPosicoesToolStripMenuItem1});
+            this.sitaCOMToolStripMenuItem.Name = "sitaCOMToolStripMenuItem";
+            this.sitaCOMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sitaCOMToolStripMenuItem.Text = "SitaCOM";
+            // 
+            // obterPosicoesToolStripMenuItem1
+            // 
+            this.obterPosicoesToolStripMenuItem1.Name = "obterPosicoesToolStripMenuItem1";
+            this.obterPosicoesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.obterPosicoesToolStripMenuItem1.Text = "ObterPosicoes";
+            this.obterPosicoesToolStripMenuItem1.Click += new System.EventHandler(this.obterPosicoesToolStripMenuItem1_Click);
+            // 
             // frmHome
             // 
             this.AccessibleDescription = "   ";
@@ -242,5 +260,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuTesteMysql;
         private System.Windows.Forms.ToolStripMenuItem obterPosicoesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testeIntegracaoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sitaCOMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem obterPosicoesToolStripMenuItem1;
     }
 }
