@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DnaCorp.Robo.Integrador.Domain.dominios
 {
@@ -18,5 +14,7 @@ namespace DnaCorp.Robo.Integrador.Domain.dominios
         public string Cidade { get; set; }
         public string Endereco { get; set; }
         public int Velocidade { get; set; }
+        public int EventoId { get; set; }
+        public string EventoDescricao { get; set; }
     }
 }
