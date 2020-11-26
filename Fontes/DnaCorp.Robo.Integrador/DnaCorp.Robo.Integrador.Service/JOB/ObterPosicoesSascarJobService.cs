@@ -20,7 +20,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
         private bool Ativo { get; set; }
 
         private Conexao _conexao;
-
+        
         public ObterPosicoesSascarJobService()
         {
             _conexao = new Conexao();
@@ -47,13 +47,13 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
                 PersistirDados(posicoes);
 
-                Criar_Log($"{nameof(ObterPosicoesSascarJobService)} - Processado com sucesso", true);
+                //Criar_Log_($"{nameof(ObterPosicoesSascarJobService)} - Processado com sucesso", true);
                 response.TotalRegistros = posicoes.Count;
                 response.Mensagem = "Processado com sucesso!";
             }
             catch (Exception erro)
             {
-                Criar_Log(erro.Message, false);
+                Criar_Log_Banco(erro.Message, false);
                 response.Mensagem = erro.Message;
             }
             finally
@@ -63,7 +63,7 @@ namespace DnaCorp.Robo.Integrador.Service.JOB
 
             return response;
         }
-        private void Criar_Log(string mensagem, bool sucesso)
+        private void Criar_Log_Banco(string mensagem, bool sucesso)
         {
             try
             {
@@ -82,7 +82,8 @@ GETDATE(),
             }
             finally
             {
-                LogHelper.CriarLog(mensagem, sucesso);
+                Criar_Log_Arquivo(mensagem);
+                //LogHelper.CriarLog(mensagem, sucesso);
             }
         }
 
@@ -113,7 +114,7 @@ GETDATE(),
                 foreach (XmlNode no in mensagens)
                 {
                     string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-                 
+
                     var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarSeqEvento>(sJson);
 
                     seqEventos.Add(obj);
@@ -125,80 +126,99 @@ GETDATE(),
 
         public List<PosicaoSascar> ObterPosicoes()
         {
-            var seqEventos = ObterSeqEventos();
-            var posicoes = new List<PosicaoSascar>();
-            var request = MontaRequisicao();
-            var xmlResponse = RequestXml(request);
-
-            ValidaRetorno(xmlResponse);
-
-            using (MemoryStream ms = new MemoryStream())
+            SascarRootResponse msg = null;
+            string sJson = "";
+            try
             {
-                var xml = new XmlDocument();
-                xml.LoadXml(xmlResponse);
-                var mensagens = xml.GetElementsByTagName("return");
-                foreach (XmlNode no in mensagens)
+                var seqEventos = ObterSeqEventos();
+                var posicoes = new List<PosicaoSascar>();
+                var request = MontaRequisicao();
+                var xmlResponse = RequestXml(request);
+                ValidaRetorno(xmlResponse);
+
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
-
-                    //sJson = sJson.Replace("[],", "null");
-                    //dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-                    //posicoes.Add(new PosicaoSascar()
-                    //{
-                    //    PosicaoId = Convert.ToInt64(msg.idPacote),
-                    //    VeiculoId = (int)msg.idVeiculo,
-                    //    Data = msg.dataPosicao,
-                    //    DataCadastro = DateTime.Now,
-                    //    Latitude = Convert.ToString(msg.latitude),
-                    //    Longitude = Convert.ToString(msg.longitude),
-                    //    Cidade = msg.cidade,
-                    //    UF = msg.uf,
-                    //    Endereco = msg.rua,
-                    //    Velocidade = Convert.ToInt32(msg.velocidade)
-                    //});
-
-                    var msg = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarRootResponse>(sJson);
-
-                    string eventoDescricao;
-                    int eventoId;
-
-                    if (msg.eventos == null)
+                    var xml = new XmlDocument();
+                    xml.LoadXml(xmlResponse);
+                    var mensagens = xml.GetElementsByTagName("return");
+                    foreach (XmlNode no in mensagens)
                     {
-                        eventoId = 0;
-                        eventoDescricao = "";
+                        msg = new SascarRootResponse();
+                        sJson = "";
+
+                        sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                        msg = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarRootResponse>(sJson);
+
+
+                        //sJson = sJson.Replace("[],", "null");
+                        //dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+                        //posicoes.Add(new PosicaoSascar()
+                        //{
+                        //    PosicaoId = Convert.ToInt64(msg.idPacote),
+                        //    VeiculoId = (int)msg.idVeiculo,
+                        //    Data = msg.dataPosicao,
+                        //    DataCadastro = DateTime.Now,
+                        //    Latitude = Convert.ToString(msg.latitude),
+                        //    Longitude = Convert.ToString(msg.longitude),
+                        //    Cidade = msg.cidade,
+                        //    UF = msg.uf,
+                        //    Endereco = msg.rua,
+                        //    Velocidade = Convert.ToInt32(msg.velocidade)
+                        //});
+
+
+                        string eventoDescricao;
+                        int eventoId;
+
+                        if (msg.eventos == null)
+                        {
+                            eventoId = 0;
+                            eventoDescricao = "";
+                        }
+                        else if (msg.eventos.codigo > 0)
+                        {
+                            eventoId = msg.eventos.codigo;
+                            eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Ativado)";
+                        }
+                        else
+                        {
+                            eventoId = msg.eventos.codigo * (-1);
+                            eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Desativado)";
+                            eventoId = msg.eventos.codigo;
+                        }
+                        posicoes.Add(new PosicaoSascar()
+                        {
+                            PosicaoId = msg.idPacote,
+                            VeiculoId = msg.idVeiculo,
+                            Data = Convert.ToDateTime(msg.dataPosicao),
+                            DataCadastro = DateTime.Now,
+                            Latitude = msg.latitude.ToString(),
+                            Longitude = msg.longitude.ToString(),
+                            Cidade = msg.cidade,
+                            UF = msg.uf,
+                            Endereco = msg.rua,
+                            Velocidade = msg.velocidade,
+                            EventoId = eventoId,
+                            EventoDescricao = eventoDescricao
+                        });
+
+
                     }
-                    else if (msg.eventos.codigo > 0)
-                    {
-                        eventoId = msg.eventos.codigo;
-                        eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Ativado)";
-                    }
-                    else
-                    {
-                        eventoId = msg.eventos.codigo * (-1);
-                        eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Desativado)";
-                        eventoId = msg.eventos.codigo;
-                    }
-                    posicoes.Add(new PosicaoSascar()
-                    {
-                        PosicaoId = msg.idPacote,
-                        VeiculoId = msg.idVeiculo,
-                        Data = Convert.ToDateTime(msg.dataPosicao),
-                        DataCadastro = DateTime.Now,
-                        Latitude = msg.latitude.ToString(),
-                        Longitude = msg.longitude.ToString(),
-                        Cidade = msg.cidade,
-                        UF = msg.uf,
-                        Endereco = msg.rua,
-                        Velocidade = msg.velocidade,
-                        EventoId = eventoId,
-                        EventoDescricao = eventoDescricao
-                    });
-
-
                 }
+
+                return posicoes;
+            }
+            catch
+            {
+                throw new Exception($@"Erro de integraçao
+Json Sascar:
+{sJson}
+
+Json Interage:
+{Newtonsoft.Json.JsonConvert.SerializeObject(msg)}
+");
             }
 
-            return posicoes;
         }
 
         private void ValidaRetorno(string xmlResponse)
@@ -241,7 +261,21 @@ getdate(),
 '{p.EventoDescricao}');");
             }
 
-            _conexao.Executa(sb.ToString());
+            try
+            {
+                _conexao.Executa(sb.ToString());
+            }
+            catch (Exception erro)
+            {
+
+                throw new Exception($@"Ocorreu um erro de persistencia.
+Erro:
+{erro.Message}
+Comando:
+{sb.ToString()}
+");
+            }
+
         }
 
         private string MontaRequisicao()
@@ -769,6 +803,28 @@ Traseiro</descricao>
             return request;
         }
 
+        private void Criar_Log_Arquivo(string mensagem)
+        {
+            try
+            {
+                var pasta = @"c:/integrador/log/sascar/";
+                if (!Directory.Exists(pasta))
+                    Directory.CreateDirectory(pasta);
+
+                string arquivo = $"{pasta}/log_{DateTime.Now.ToString("yyyyMMddHHmmss")}.txt";
+                using (StreamWriter sw = new StreamWriter(arquivo))
+                {
+                    sw.WriteLine(mensagem);
+                    sw.Flush();
+                    sw.Close();
+                }
+            }
+            catch (Exception erro)
+            {
+                throw new Exception($@"Não foi possivel criar arquivo de log.
+erro: {erro.Message}");
+            }
+        }
         internal class SascarSeqEvento
         {
             public int idSequenciamentoEvento { get; set; }
