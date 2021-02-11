@@ -6,12 +6,33 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DnaCorp.Robo.Integrador.UI.Formularios
 {
+    public class Carro
+    {
+        public int CarroId { get; set; }
+        public int Portas { get; set; }
+        public int Cavalos { get; set; }
+        public string Marca { get; set; }
+        public string Modelo { get; set; }
+        public string evt1 { get; set; }
+        public string evt2 { get; set; }
+        public string evt3 { get; set; }
+        public string evt4 { get; set; }
+
+    }
+
+    public class Evento
+    {
+        public string codigo { get; set; }
+        public string valor { get; set; }
+    }
+
     public partial class frmHome : Form
     {
         public frmHome()
@@ -43,8 +64,39 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
         private void frmHome_Load(object sender, EventArgs e)
         {
-            
+            var carro = new
+            {
+                CarroId = 1,
+                Cavalos = 8,
+                Marca = "Ford",
+                Modelo = "Fiesta",
+                Portas = 4,
+                evt1 = true,
+                evt2 = 1,
+                evt3 = -1,
+                evt4 = "2",
 
+
+            };
+
+
+            var listaEventos = new List<Evento>();
+
+            //foreach (PropertyInfo propertyInfo in carro.GetType().GetProperties())
+            foreach (PropertyInfo propertyInfo in carro.GetType().GetProperties())
+            {
+                if (propertyInfo.Name.Contains("evt"))
+                {
+                    listaEventos.Add(new Evento()
+                    {
+                        codigo = propertyInfo.Name,
+                        valor = propertyInfo.GetValue(carro).ToString()
+
+                    });
+                }
+                    
+            }
+            
         }
 
         private void mnuObterVeiculosSascar_Click(object sender, EventArgs e)
@@ -71,13 +123,18 @@ namespace DnaCorp.Robo.Integrador.UI.Formularios
 
         private void MnuObterVeiculosAutotrac_Click(object sender, EventArgs e)
         {
-            dynamic config = ConfigurationHelper.getConfiguration();
-            int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterVeiculos.Intervalo);
+            DateTime agora = DateTime.Now;
+            DateTime ultimaData = new DateTime(2020, 12, 19);
+            var dif = agora.Subtract(ultimaData);
 
-            var servico = new ObterVeiculosAutotracJobService();
-            var frm = new frmIntegrador(servico, intervalo);
-            frm.Text = "Integração de veiculos - AUTOTRAC";
-            frm.Show();
+            
+            //dynamic config = ConfigurationHelper.getConfiguration();
+            //int intervalo = Convert.ToInt32(config.Rastreadores.Autotrac.ObterVeiculos.Intervalo);
+
+            //var servico = new ObterVeiculosAutotracJobService();
+            //var frm = new frmIntegrador(servico, intervalo);
+            //frm.Text = "Integração de veiculos - AUTOTRAC";
+            //frm.Show();
         }
 
         private void MnuObterPosicoesAutotrac_Click(object sender, EventArgs e)

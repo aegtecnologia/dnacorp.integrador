@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -108,6 +109,7 @@ GETDATE(),
                     {
                         sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
                         dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
+
                         posicoes.Add(new PosicaoJabur()
                         {
                             PosicaoId = Convert.ToInt64(msg.mId),
@@ -120,8 +122,9 @@ GETDATE(),
                             Cidade = msg.mun,
                             UF = msg.uf,
                             Endereco = msg.rua,
-                            MacroID = msg?.tfrID == null ? 0 : Convert.ToInt32( msg?.tfrID),
-                            MacroDescricao = msg?.dMac ?? ""
+                            MacroID = msg?.tfrID == null ? 0 : Convert.ToInt32(msg?.tfrID),
+                            MacroDescricao = msg?.dMac ?? "",
+                            Eventos = ListarPosicaoEventos(msg)
                         });
                     }
                     catch (Exception erro)
@@ -136,6 +139,35 @@ GETDATE(),
             }
 
             return posicoes;
+        }
+
+        private List<PosicaoJaburEvento> ListarPosicaoEventos(dynamic entidade)
+        {
+            var lista = new List<PosicaoJaburEvento>();
+
+            try
+            {
+                foreach (PropertyInfo propertyInfo in entidade.GetType().GetProperties())
+                {
+                    if (propertyInfo.Name.Contains("evt"))
+                    {
+                        lista.Add(new PosicaoJaburEvento()
+                        {
+                            EventoCodigo = propertyInfo.Name,
+                            EventoValor = propertyInfo.GetValue(entidade).ToString()
+
+                        });
+                    }
+
+                }
+            }
+            catch (Exception erro)
+            {
+                throw erro;
+            }
+
+            return lista;
+
         }
 
         private void ValidaRetorno(string xmlResponse)
@@ -185,6 +217,18 @@ getdate(),
 '{p.Endereco?.Replace("'", "") ?? ""}',
 {p.MacroID},
 '{p.MacroDescricao}');");
+
+                foreach (var e in p.Eventos)
+                {
+                    sb.AppendLine($@"insert into posicoes_jabur_evento values (
+getdate(),
+{p.PosicaoId},
+{e.EventoId},
+'{e.EventoCodigo}',
+'{e.EventoValor}');");
+
+                }
+
             }
 
             _conexao.Executa(sb.ToString());
@@ -306,6 +350,7 @@ getdate(),
                 }
             }
         }
+
 
     }
 }

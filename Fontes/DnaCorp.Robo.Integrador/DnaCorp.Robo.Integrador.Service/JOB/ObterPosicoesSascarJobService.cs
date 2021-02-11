@@ -127,7 +127,7 @@ GETDATE(),
         public List<PosicaoSascar> ObterPosicoes()
         {
             SascarRootResponse msg = null;
-            string sJson = "";
+            var sJson = "";
             try
             {
                 var seqEventos = ObterSeqEventos();
@@ -149,55 +149,40 @@ GETDATE(),
                         sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
                         msg = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarRootResponse>(sJson);
 
-
-                        //sJson = sJson.Replace("[],", "null");
-                        //dynamic msg = Newtonsoft.Json.JsonConvert.DeserializeObject(sJson);
-                        //posicoes.Add(new PosicaoSascar()
-                        //{
-                        //    PosicaoId = Convert.ToInt64(msg.idPacote),
-                        //    VeiculoId = (int)msg.idVeiculo,
-                        //    Data = msg.dataPosicao,
-                        //    DataCadastro = DateTime.Now,
-                        //    Latitude = Convert.ToString(msg.latitude),
-                        //    Longitude = Convert.ToString(msg.longitude),
-                        //    Cidade = msg.cidade,
-                        //    UF = msg.uf,
-                        //    Endereco = msg.rua,
-                        //    Velocidade = Convert.ToInt32(msg.velocidade)
-                        //});
-
-
                         string eventoDescricao;
                         int eventoId;
 
-                        if (msg.eventos == null)
-                        {
-                            eventoId = 0;
-                            eventoDescricao = "";
-                        }
-                        else if (msg.eventos.codigo > 0)
-                        {
-                            eventoId = msg.eventos.codigo;
-                            eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Ativado)";
-                        }
-                        else
-                        {
-                            eventoId = msg.eventos.codigo * (-1);
-                            eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Desativado)";
-                            eventoId = msg.eventos.codigo;
-                        }
+                        eventoId = 0;
+                        eventoDescricao = "";
+
+                        //if (msg.eventos == null || msg.eventos.Count == 0)
+                        //{
+                        //    eventoId = 0;
+                        //    eventoDescricao = "";
+                        //}
+                        //else if (Convert.ToInt32(msg.eventos[0].codigo) > 0)
+                        //{
+                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo);
+                        //    eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Ativado)";
+                        //}
+                        //else
+                        //{
+                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo) * (-1);
+                        //    eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Desativado)";
+                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo);
+                        //}
                         posicoes.Add(new PosicaoSascar()
                         {
-                            PosicaoId = msg.idPacote,
-                            VeiculoId = msg.idVeiculo,
-                            Data = Convert.ToDateTime(msg.dataPosicao),
+                            PosicaoId = Convert.ToInt64(msg.idPacote),
+                            VeiculoId = Convert.ToInt32(msg.idVeiculo),
+                            Data = msg.dataPosicao,
                             DataCadastro = DateTime.Now,
                             Latitude = msg.latitude.ToString(),
                             Longitude = msg.longitude.ToString(),
                             Cidade = msg.cidade,
                             UF = msg.uf,
                             Endereco = msg.rua,
-                            Velocidade = msg.velocidade,
+                            Velocidade = Convert.ToInt32(msg.velocidade),
                             EventoId = eventoId,
                             EventoDescricao = eventoDescricao
                         });
@@ -832,72 +817,135 @@ erro: {erro.Message}");
             public string descricao { get; set; }
 
         }
-
         internal class SascarEventoResponse
         {
-            public int codigo { get; set; }
+            public string codigo { get; set; }
         }
 
         internal class SascarRootResponse
         {
-            public int idVeiculo { get; set; }
-            public string dataPosicao { get; set; }
-            //public string dataPacote { get; set; }
-            public double latitude { get; set; }
-            public double longitude { get; set; }
-            //public int direcao { get; set; }
-            public int velocidade { get; set; }
-            //public int ignicao { get; set; }
-            //public int odometro { get; set; }
-            //public int horimetro { get; set; }
-            //public int tensao { get; set; }
-            //public int saida1 { get; set; }
-            //public int saida2 { get; set; }
-            //public int saida3 { get; set; }
-            //public int saida4 { get; set; }
-            //public int entrada1 { get; set; }
-            //public int entrada2 { get; set; }
-            //public int entrada3 { get; set; }
-            //public int entrada4 { get; set; }
-            //public int satelite { get; set; }
-            //public int memoria { get; set; }
-            //public int idReferencia { get; set; }
-            //public int bloqueio { get; set; }
-            //public int gps { get; set; }
-            public string uf { get; set; }
+            public string anguloReferencia { get; set; }
+            public string bloqueio { get; set; }
             public string cidade { get; set; }
+            public string codigoMacro { get; set; }
+            public string conteudoMensagem { get; set; }
+            public DateTime dataPacote { get; set; }
+            public DateTime dataPosicao { get; set; }
+            public string direcao { get; set; }
+            public string distanciaReferencia { get; set; }
+            public string entrada1 { get; set; }
+            public string entrada2 { get; set; }
+            public string entrada3 { get; set; }
+            public string entrada4 { get; set; }
+            public string entrada5 { get; set; }
+            public string entrada6 { get; set; }
+            public string entrada7 { get; set; }
+            public string entrada8 { get; set; }
+            public string eventoFormatado { get; set; }
+            public string eventoSeqFormatado { get; set; }
+            //public List<SascarEventoResponse> eventos { get; set; }
+            public string gps { get; set; }
+            public string horimetro { get; set; }
+            public string idPacote { get; set; }
+            public string idReferencia { get; set; }
+            public string idVeiculo { get; set; }
+            public string ignicao { get; set; }
+            public string integradoraId { get; set; }
+            public string jamming { get; set; }
+            public string latitude { get; set; }
+            public string longitude { get; set; }
+            public string memoria { get; set; }
+            public string nomeMensagem { get; set; }
+            public string odometro { get; set; }
+            public string pontoEntrada { get; set; }
+            public string pontoReferencia { get; set; }
+            public string pontoSaida { get; set; }
+            public string rpm { get; set; }
             public string rua { get; set; }
-            //public string pais { get; set; }
-            //public string pontoReferencia { get; set; }
-            //public int anguloReferencia { get; set; }
-            //public int distanciaReferencia { get; set; }
-            //public int rpm { get; set; }
-            //public int temperatura1 { get; set; }
-            //public int temperatura2 { get; set; }
-            //public int temperatura3 { get; set; }
-            //public int saida5 { get; set; }
-            //public int saida6 { get; set; }
-            //public int saida7 { get; set; }
-            //public int saida8 { get; set; }
-            //public int entrada5 { get; set; }
-            //public int entrada6 { get; set; }
-            //public int entrada7 { get; set; }
-            //public int entrada8 { get; set; }
-            //public int pontoEntrada { get; set; }
-            //public int pontoSaida { get; set; }
-            //public int codigoMacro { get; set; }
-            //public string nomeMensagem { get; set; }
-            //public string conteudoMensagem { get; set; }
-            //public string textoMensagem { get; set; }
-            //public int tipoTeclado { get; set; }
-            //public List<object> eventoSequenciamento { get; set; }
-            public SascarEventoResponse eventos { get; set; }
-            //public int jamming { get; set; }
-            public Int64 idPacote { get; set; }
-            //public int integradoraId { get; set; }
-            //public object idMotorista { get; set; }
-            //public string nomeMotorista { get; set; }
-            //public object estadoLimpadorParabrisa { get; set; }
+            public string saida1 { get; set; }
+            public string saida2 { get; set; }
+            public string saida3 { get; set; }
+            public string saida4 { get; set; }
+            public string saida5 { get; set; }
+            public string saida6 { get; set; }
+            public string saida7 { get; set; }
+            public string saida8 { get; set; }
+            public string satelite { get; set; }
+            public string temperatura1 { get; set; }
+            public string temperatura2 { get; set; }
+            public string temperatura3 { get; set; }
+            public string tensao { get; set; }
+            public string textoMensagem { get; set; }
+            public string tipoTeclado { get; set; }
+            public string uf { get; set; }
+            public string velocidade { get; set; }
         }
+
+        //internal class SascarEventoResponse
+        //{
+        //    public int codigo { get; set; }
+        //}
+
+        //internal class SascarRootResponse
+        //{
+        //    public int idVeiculo { get; set; }
+        //    public string dataPosicao { get; set; }
+        //    //public string dataPacote { get; set; }
+        //    public double latitude { get; set; }
+        //    public double longitude { get; set; }
+        //    //public int direcao { get; set; }
+        //    public int velocidade { get; set; }
+        //    //public int ignicao { get; set; }
+        //    //public int odometro { get; set; }
+        //    //public int horimetro { get; set; }
+        //    //public int tensao { get; set; }
+        //    //public int saida1 { get; set; }
+        //    //public int saida2 { get; set; }
+        //    //public int saida3 { get; set; }
+        //    //public int saida4 { get; set; }
+        //    //public int entrada1 { get; set; }
+        //    //public int entrada2 { get; set; }
+        //    //public int entrada3 { get; set; }
+        //    //public int entrada4 { get; set; }
+        //    //public int satelite { get; set; }
+        //    //public int memoria { get; set; }
+        //    //public int idReferencia { get; set; }
+        //    //public int bloqueio { get; set; }
+        //    //public int gps { get; set; }
+        //    public string uf { get; set; }
+        //    public string cidade { get; set; }
+        //    public string rua { get; set; }
+        //    //public string pais { get; set; }
+        //    //public string pontoReferencia { get; set; }
+        //    //public int anguloReferencia { get; set; }
+        //    //public int distanciaReferencia { get; set; }
+        //    //public int rpm { get; set; }
+        //    //public int temperatura1 { get; set; }
+        //    //public int temperatura2 { get; set; }
+        //    //public int temperatura3 { get; set; }
+        //    //public int saida5 { get; set; }
+        //    //public int saida6 { get; set; }
+        //    //public int saida7 { get; set; }
+        //    //public int saida8 { get; set; }
+        //    //public int entrada5 { get; set; }
+        //    //public int entrada6 { get; set; }
+        //    //public int entrada7 { get; set; }
+        //    //public int entrada8 { get; set; }
+        //    //public int pontoEntrada { get; set; }
+        //    //public int pontoSaida { get; set; }
+        //    //public int codigoMacro { get; set; }
+        //    //public string nomeMensagem { get; set; }
+        //    //public string conteudoMensagem { get; set; }
+        //    //public string textoMensagem { get; set; }
+        //    //public int tipoTeclado { get; set; }
+        //    //public List<object> eventoSequenciamento { get; set; }
+        //    public SascarEventoResponse eventos { get; set; }
+        //    //public int jamming { get; set; }
+        //    public Int64 idPacote { get; set; }
+        //    //public int integradoraId { get; set; }
+        //    //public object idMotorista { get; set; }
+        //    //public string nomeMotorista { get; set; }
+        //    //public object estadoLimpadorParabrisa { get; set; }
+        //}
     }
 }
