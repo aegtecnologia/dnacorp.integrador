@@ -147,14 +147,14 @@ GETDATE(),
 
             try
             {
-                foreach (PropertyInfo propertyInfo in entidade.GetType().GetProperties())
+                foreach (Newtonsoft.Json.Linq.JProperty campo in entidade)
                 {
-                    if (propertyInfo.Name.Contains("evt"))
+                    if (campo.Name.Contains("evt"))
                     {
                         lista.Add(new PosicaoJaburEvento()
                         {
-                            EventoCodigo = propertyInfo.Name,
-                            EventoValor = propertyInfo.GetValue(entidade).ToString()
+                            EventoCodigo = campo.Name,
+                            EventoValor = campo.Value.ToString()
 
                         });
                     }
@@ -223,7 +223,6 @@ getdate(),
                     sb.AppendLine($@"insert into posicoes_jabur_evento values (
 getdate(),
 {p.PosicaoId},
-{e.EventoId},
 '{e.EventoCodigo}',
 '{e.EventoValor}');");
 
@@ -235,6 +234,7 @@ getdate(),
         }
         private string MontaRequisicao()
         {
+            //var id = 91363387905;
             var id = UltimoRegistro().ToString();//"46062233155";
 
             string comando = @"<RequestMensagemCB>

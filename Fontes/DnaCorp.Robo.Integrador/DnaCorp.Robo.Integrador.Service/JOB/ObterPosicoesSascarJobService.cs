@@ -91,7 +91,7 @@ GETDATE(),
         {
             string retorno = "";
 
-            using (var sr = new StreamReader(@"C:\Anderson\dnacorp.integrador\Recursos\documentos\sascar\modelos\obterPacotePosicoesResponse.xml"))
+            using (var sr = new StreamReader(@"C:\Anderson\dnacorp.integrador\Recursos\documentos\sascar\modelos\obterPacotePosicoesJSONResponse.xml"))
             {
                 retorno = sr.ReadToEnd();
             }
@@ -99,9 +99,9 @@ GETDATE(),
             return retorno;
         }
 
-        private List<SascarSeqEvento> ObterSeqEventos()
+        private HashSet<SascarCadEvento> ObterSeqEventos()
         {
-            var seqEventos = new List<SascarSeqEvento>();
+            var seqEventos = new HashSet<SascarCadEvento>();
             var xmlResponse = RequestXml_Eventos();
 
             ValidaRetorno(xmlResponse);
@@ -115,7 +115,7 @@ GETDATE(),
                 {
                     string sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
 
-                    var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarSeqEvento>(sJson);
+                    var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarCadEvento>(sJson);
 
                     seqEventos.Add(obj);
                 }
@@ -130,9 +130,10 @@ GETDATE(),
             var sJson = "";
             try
             {
-                var seqEventos = ObterSeqEventos();
+                var cadEventos = ObterSeqEventos();
                 var posicoes = new List<PosicaoSascar>();
                 var request = MontaRequisicao();
+                //var xmlResponse = RequestXmlMock();
                 var xmlResponse = RequestXml(request);
                 ValidaRetorno(xmlResponse);
 
@@ -145,33 +146,13 @@ GETDATE(),
                     {
                         msg = new SascarRootResponse();
                         sJson = "";
-
-                        sJson = Newtonsoft.Json.JsonConvert.SerializeXmlNode(no, Newtonsoft.Json.Formatting.None, true);
+                        
+                        sJson = no.InnerText;
                         msg = Newtonsoft.Json.JsonConvert.DeserializeObject<SascarRootResponse>(sJson);
 
-                        string eventoDescricao;
-                        int eventoId;
 
-                        eventoId = 0;
-                        eventoDescricao = "";
-
-                        //if (msg.eventos == null || msg.eventos.Count == 0)
-                        //{
-                        //    eventoId = 0;
-                        //    eventoDescricao = "";
-                        //}
-                        //else if (Convert.ToInt32(msg.eventos[0].codigo) > 0)
-                        //{
-                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo);
-                        //    eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Ativado)";
-                        //}
-                        //else
-                        //{
-                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo) * (-1);
-                        //    eventoDescricao = seqEventos.Where(e => e.atuador.Equals(eventoId)).SingleOrDefault().descricao + " (Desativado)";
-                        //    eventoId = Convert.ToInt32(msg.eventos[0].codigo);
-                        //}
-                        posicoes.Add(new PosicaoSascar()
+                        var eventos = msg.eventos.Select(e => e.codigo);
+                        var posicao = new PosicaoSascar(eventos.ToList(), cadEventos)
                         {
                             PosicaoId = Convert.ToInt64(msg.idPacote),
                             VeiculoId = Convert.ToInt32(msg.idVeiculo),
@@ -182,10 +163,10 @@ GETDATE(),
                             Cidade = msg.cidade,
                             UF = msg.uf,
                             Endereco = msg.rua,
-                            Velocidade = Convert.ToInt32(msg.velocidade),
-                            EventoId = eventoId,
-                            EventoDescricao = eventoDescricao
-                        });
+                            Velocidade = Convert.ToInt32(msg.velocidade) 
+                        };
+
+                        posicoes.Add(posicao);
 
 
                     }
@@ -193,7 +174,7 @@ GETDATE(),
 
                 return posicoes;
             }
-            catch
+            catch(Exception erro)
             {
                 throw new Exception($@"Erro de integraçao
 Json Sascar:
@@ -242,8 +223,18 @@ getdate(),
 '{p.UF}',
 '{p.Cidade}',
 '{p.Endereco?.Replace("'", "") ?? ""}',
-{p.EventoId},
-'{p.EventoDescricao}');");
+0,'');");
+                
+                foreach (var e in p.Eventos)
+                {
+                    sb.AppendLine($@"insert into posicoes_sascar_eventos values (
+getdate(),
+{p.PosicaoId},
+{e.Codigo},
+'{e.EventoDescricao}',
+{e.StatusCodigo},
+'{e.StatusDescricao}');");
+                }
             }
 
             try
@@ -268,11 +259,11 @@ Comando:
             string request = $@"<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:web='http://webservice.web.integracao.sascar.com.br/'>
 <soapenv:Header/>
 <soapenv:Body>
-<web:obterPacotePosicoes>
+<web:obterPacotePosicoesJSON>
 <usuario>{Usuario}</usuario>
 <senha>{Senha}</senha>
 <quantidade>3000</quantidade>
-</web:obterPacotePosicoes>
+</web:obterPacotePosicoesJSON>
 </soapenv:Body>
 </soapenv:Envelope>";
 
@@ -810,17 +801,12 @@ Traseiro</descricao>
 erro: {erro.Message}");
             }
         }
-        internal class SascarSeqEvento
+        
+        internal class Evento
         {
-            public int idSequenciamentoEvento { get; set; }
-            public int atuador { get; set; }
-            public string descricao { get; set; }
+            public int codigo { get; set; }
+        }
 
-        }
-        internal class SascarEventoResponse
-        {
-            public string codigo { get; set; }
-        }
 
         internal class SascarRootResponse
         {
@@ -843,7 +829,7 @@ erro: {erro.Message}");
             public string entrada8 { get; set; }
             public string eventoFormatado { get; set; }
             public string eventoSeqFormatado { get; set; }
-            //public List<SascarEventoResponse> eventos { get; set; }
+            public List<Evento> eventos { get; set; }
             public string gps { get; set; }
             public string horimetro { get; set; }
             public string idPacote { get; set; }
@@ -880,72 +866,5 @@ erro: {erro.Message}");
             public string uf { get; set; }
             public string velocidade { get; set; }
         }
-
-        //internal class SascarEventoResponse
-        //{
-        //    public int codigo { get; set; }
-        //}
-
-        //internal class SascarRootResponse
-        //{
-        //    public int idVeiculo { get; set; }
-        //    public string dataPosicao { get; set; }
-        //    //public string dataPacote { get; set; }
-        //    public double latitude { get; set; }
-        //    public double longitude { get; set; }
-        //    //public int direcao { get; set; }
-        //    public int velocidade { get; set; }
-        //    //public int ignicao { get; set; }
-        //    //public int odometro { get; set; }
-        //    //public int horimetro { get; set; }
-        //    //public int tensao { get; set; }
-        //    //public int saida1 { get; set; }
-        //    //public int saida2 { get; set; }
-        //    //public int saida3 { get; set; }
-        //    //public int saida4 { get; set; }
-        //    //public int entrada1 { get; set; }
-        //    //public int entrada2 { get; set; }
-        //    //public int entrada3 { get; set; }
-        //    //public int entrada4 { get; set; }
-        //    //public int satelite { get; set; }
-        //    //public int memoria { get; set; }
-        //    //public int idReferencia { get; set; }
-        //    //public int bloqueio { get; set; }
-        //    //public int gps { get; set; }
-        //    public string uf { get; set; }
-        //    public string cidade { get; set; }
-        //    public string rua { get; set; }
-        //    //public string pais { get; set; }
-        //    //public string pontoReferencia { get; set; }
-        //    //public int anguloReferencia { get; set; }
-        //    //public int distanciaReferencia { get; set; }
-        //    //public int rpm { get; set; }
-        //    //public int temperatura1 { get; set; }
-        //    //public int temperatura2 { get; set; }
-        //    //public int temperatura3 { get; set; }
-        //    //public int saida5 { get; set; }
-        //    //public int saida6 { get; set; }
-        //    //public int saida7 { get; set; }
-        //    //public int saida8 { get; set; }
-        //    //public int entrada5 { get; set; }
-        //    //public int entrada6 { get; set; }
-        //    //public int entrada7 { get; set; }
-        //    //public int entrada8 { get; set; }
-        //    //public int pontoEntrada { get; set; }
-        //    //public int pontoSaida { get; set; }
-        //    //public int codigoMacro { get; set; }
-        //    //public string nomeMensagem { get; set; }
-        //    //public string conteudoMensagem { get; set; }
-        //    //public string textoMensagem { get; set; }
-        //    //public int tipoTeclado { get; set; }
-        //    //public List<object> eventoSequenciamento { get; set; }
-        //    public SascarEventoResponse eventos { get; set; }
-        //    //public int jamming { get; set; }
-        //    public Int64 idPacote { get; set; }
-        //    //public int integradoraId { get; set; }
-        //    //public object idMotorista { get; set; }
-        //    //public string nomeMotorista { get; set; }
-        //    //public object estadoLimpadorParabrisa { get; set; }
-        //}
     }
 }

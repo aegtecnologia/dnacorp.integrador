@@ -46,9 +46,11 @@
             this.sighraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTesteMysql = new System.Windows.Forms.ToolStripMenuItem();
             this.obterPosicoesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.testeIntegracaoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sitaCOMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.obterPosicoesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.testeIntegracaoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ravexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.obterPosicoesRavexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,7 +81,8 @@
             this.autotracToolStripMenuItem,
             this.omnilinkToolStripMenuItem,
             this.sighraToolStripMenuItem,
-            this.sitaCOMToolStripMenuItem});
+            this.sitaCOMToolStripMenuItem,
+            this.ravexToolStripMenuItem});
             this.comandosToolStripMenuItem.Name = "comandosToolStripMenuItem";
             this.comandosToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.comandosToolStripMenuItem.Text = "Comandos";
@@ -96,14 +99,14 @@
             // mnuObterPosicoesJabur
             // 
             this.mnuObterPosicoesJabur.Name = "mnuObterPosicoesJabur";
-            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesJabur.Size = new System.Drawing.Size(150, 22);
             this.mnuObterPosicoesJabur.Text = "ObterPosicoes";
             this.mnuObterPosicoesJabur.Click += new System.EventHandler(this.mnuObterPosicoesJabur_Click);
             // 
             // mnuObterVeiculosJabur
             // 
             this.mnuObterVeiculosJabur.Name = "mnuObterVeiculosJabur";
-            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterVeiculosJabur.Size = new System.Drawing.Size(150, 22);
             this.mnuObterVeiculosJabur.Text = "ObterVeiculos";
             this.mnuObterVeiculosJabur.Click += new System.EventHandler(this.mnuObterVeiculosJabur_Click);
             // 
@@ -119,14 +122,14 @@
             // mnuObterVeiculosSascar
             // 
             this.mnuObterVeiculosSascar.Name = "mnuObterVeiculosSascar";
-            this.mnuObterVeiculosSascar.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterVeiculosSascar.Size = new System.Drawing.Size(150, 22);
             this.mnuObterVeiculosSascar.Text = "ObterVeiculos";
             this.mnuObterVeiculosSascar.Click += new System.EventHandler(this.mnuObterVeiculosSascar_Click);
             // 
             // mnuObterPosicoesSascar
             // 
             this.mnuObterPosicoesSascar.Name = "mnuObterPosicoesSascar";
-            this.mnuObterPosicoesSascar.Size = new System.Drawing.Size(180, 22);
+            this.mnuObterPosicoesSascar.Size = new System.Drawing.Size(150, 22);
             this.mnuObterPosicoesSascar.Text = "ObterPosicoes";
             this.mnuObterPosicoesSascar.Click += new System.EventHandler(this.mnuObterPosicoesSascar_Click);
             // 
@@ -187,23 +190,16 @@
             // mnuTesteMysql
             // 
             this.mnuTesteMysql.Name = "mnuTesteMysql";
-            this.mnuTesteMysql.Size = new System.Drawing.Size(150, 22);
+            this.mnuTesteMysql.Size = new System.Drawing.Size(180, 22);
             this.mnuTesteMysql.Text = "TesteMySql";
             this.mnuTesteMysql.Click += new System.EventHandler(this.mnuTesteMysql_Click);
             // 
             // obterPosicoesToolStripMenuItem
             // 
             this.obterPosicoesToolStripMenuItem.Name = "obterPosicoesToolStripMenuItem";
-            this.obterPosicoesToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.obterPosicoesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.obterPosicoesToolStripMenuItem.Text = "ObterPosicoes";
             this.obterPosicoesToolStripMenuItem.Click += new System.EventHandler(this.obterPosicoesToolStripMenuItem_Click);
-            // 
-            // testeIntegracaoToolStripMenuItem
-            // 
-            this.testeIntegracaoToolStripMenuItem.Name = "testeIntegracaoToolStripMenuItem";
-            this.testeIntegracaoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.testeIntegracaoToolStripMenuItem.Text = "Teste Integracao";
-            this.testeIntegracaoToolStripMenuItem.Click += new System.EventHandler(this.testeIntegracaoToolStripMenuItem_Click);
             // 
             // sitaCOMToolStripMenuItem
             // 
@@ -219,6 +215,28 @@
             this.obterPosicoesToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.obterPosicoesToolStripMenuItem1.Text = "ObterPosicoes";
             this.obterPosicoesToolStripMenuItem1.Click += new System.EventHandler(this.obterPosicoesToolStripMenuItem1_Click);
+            // 
+            // testeIntegracaoToolStripMenuItem
+            // 
+            this.testeIntegracaoToolStripMenuItem.Name = "testeIntegracaoToolStripMenuItem";
+            this.testeIntegracaoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.testeIntegracaoToolStripMenuItem.Text = "Teste Integracao";
+            this.testeIntegracaoToolStripMenuItem.Click += new System.EventHandler(this.testeIntegracaoToolStripMenuItem_Click);
+            // 
+            // ravexToolStripMenuItem
+            // 
+            this.ravexToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.obterPosicoesRavexToolStripMenuItem});
+            this.ravexToolStripMenuItem.Name = "ravexToolStripMenuItem";
+            this.ravexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ravexToolStripMenuItem.Text = "Ravex";
+            // 
+            // obterPosicoesRavexToolStripMenuItem
+            // 
+            this.obterPosicoesRavexToolStripMenuItem.Name = "obterPosicoesRavexToolStripMenuItem";
+            this.obterPosicoesRavexToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.obterPosicoesRavexToolStripMenuItem.Text = "ObterPosicoesRavex";
+            this.obterPosicoesRavexToolStripMenuItem.Click += new System.EventHandler(this.obterPosicoesRavexToolStripMenuItem_Click);
             // 
             // frmHome
             // 
@@ -262,5 +280,7 @@
         private System.Windows.Forms.ToolStripMenuItem testeIntegracaoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sitaCOMToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem obterPosicoesToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem ravexToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem obterPosicoesRavexToolStripMenuItem;
     }
 }
