@@ -6,6 +6,7 @@ using DnaCorp.Integrador.Domain.Contratos.Job;
 using DnaCorp.Integrador.Infra.MSSql;
 using DnaCorp.Integrador.Service.JOB;
 using Hangfire;
+using Hangfire.Console;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,9 @@ namespace DnaCorp.Integrador.WebApp
 {
     public class Startup
     {
+        //referencia do hangfire console
+        //https://github.com/pieceofsummer/Hangfire.Console/blob/master/README.md
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,7 +50,12 @@ namespace DnaCorp.Integrador.WebApp
 
             //hangfire
             GlobalJobFilters.Filters.Add(new DisableConcurrentExecutionAttribute(timeoutInSeconds: 60));
-            services.AddHangfire(x => x.UseSqlServerStorage(provider));
+            services.AddHangfire(x => 
+            {
+                x.UseSqlServerStorage(provider);
+                x.UseConsole();
+            });
+
             services.AddHangfireServer();
             
             //IoC
@@ -92,7 +101,7 @@ namespace DnaCorp.Integrador.WebApp
             //RecurringJob.AddOrUpdate<IObterPosicoesSascarJobService>("Sascar - posições", t => t.Executa(), cronExpression: "*/5 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
             //TESTE
-            RecurringJob.AddOrUpdate<ITesteJobService>("Teste", t => t.Executa(), cronExpression: "*/2 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
+            RecurringJob.AddOrUpdate<ITesteJobService>("Teste", t => t.Executa(null), cronExpression: "*/2 * * * *", timeZone: TimeZoneInfo.Local, queue: "automacao");
 
             if (env.IsDevelopment())
             {
